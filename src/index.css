@@ -15,37 +15,37 @@
     --popover: 222 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 120 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 280 100% 50%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 120 50% 80%;
+    --secondary: 217 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 120 80% 40%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 180 100% 50%;
+    --accent-foreground: 222 84% 4.9%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 120 100% 50%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 280 100% 50%;
 
+    --neon-purple: 280 100% 50%;
+    --neon-cyan: 180 100% 50%;
+    --neon-pink: 320 100% 50%;
     --neon-green: 120 100% 50%;
-    --neon-emerald: 160 100% 50%;
-    --accent-gold: 45 100% 60%;
-    --accent-blue: 220 100% 60%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(var(--neon-green)), hsl(var(--neon-emerald)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--muted)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent-gold)), hsl(var(--neon-green)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-cyan)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--neon-pink)), hsl(var(--neon-purple)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-green)));
     
-    --glow-primary: 0 0 20px hsl(var(--neon-green) / 0.5);
-    --glow-accent: 0 0 20px hsl(var(--accent-gold) / 0.5);
-    --glow-secondary: 0 0 20px hsl(var(--neon-emerald) / 0.5);
+    --glow-primary: 0 0 20px hsl(var(--neon-purple) / 0.5);
+    --glow-accent: 0 0 20px hsl(var(--neon-cyan) / 0.5);
+    --glow-secondary: 0 0 20px hsl(var(--neon-pink) / 0.5);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);

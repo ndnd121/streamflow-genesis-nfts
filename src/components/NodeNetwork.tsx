@@ -54,7 +54,7 @@ export const NodeNetwork = () => {
       case 'active':
         return <CheckCircle className="h-4 w-4 text-neon-green" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-neon-gold" />;
+        return <Clock className="h-4 w-4 text-neon-cyan" />;
       case 'offline':
         return <AlertCircle className="h-4 w-4 text-destructive" />;
       default:
@@ -67,7 +67,7 @@ export const NodeNetwork = () => {
       case 'active':
         return <Badge className="bg-neon-green/20 text-neon-green border-neon-green/50">Active</Badge>;
       case 'pending':
-        return <Badge className="bg-neon-gold/20 text-neon-gold border-neon-gold/50">Pending</Badge>;
+        return <Badge className="bg-neon-cyan/20 text-neon-cyan border-neon-cyan/50">Pending</Badge>;
       case 'offline':
         return <Badge variant="destructive">Offline</Badge>;
       default:
@@ -93,7 +93,7 @@ export const NodeNetwork = () => {
               <p className="text-sm text-muted-foreground">Total Nodes</p>
               <p className="text-2xl font-bold text-foreground">234</p>
             </div>
-            <Server className="h-8 w-8 text-neon-green" />
+            <Server className="h-8 w-8 text-neon-purple" />
           </div>
         </Card>
 
@@ -103,7 +103,7 @@ export const NodeNetwork = () => {
               <p className="text-sm text-muted-foreground">Total Compute</p>
               <p className="text-2xl font-bold text-foreground">15.7 PH/s</p>
             </div>
-            <Cpu className="h-8 w-8 text-neon-emerald" />
+            <Cpu className="h-8 w-8 text-neon-cyan" />
           </div>
         </Card>
 
@@ -149,7 +149,7 @@ export const NodeNetwork = () => {
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <Cpu className="h-3 w-3 text-neon-emerald" />
+                          <Cpu className="h-3 w-3 text-neon-cyan" />
                           <span className="text-xs text-muted-foreground">Compute</span>
                         </div>
                         <Progress value={node.computePower} className="h-1.5" />
@@ -157,7 +157,7 @@ export const NodeNetwork = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <HardDrive className="h-3 w-3 text-neon-gold" />
+                          <HardDrive className="h-3 w-3 text-neon-purple" />
                           <span className="text-xs text-muted-foreground">Storage</span>
                         </div>
                         <Progress value={node.storage} className="h-1.5" />
