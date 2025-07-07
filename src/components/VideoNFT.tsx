@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Share2, Star, TrendingUp, Play } from "lucide-react";
+import { Heart, Share2, Bookmark, TrendingUp, Play } from "lucide-react";
 
 interface VideoNFTProps {
   id: string;
@@ -30,20 +30,20 @@ export const VideoNFT = ({
   tokenReward 
 }: VideoNFTProps) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [isCollected, setIsCollected] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    // Consume tokens and trigger growth calculation
+    // Consume 5 tokens and trigger growth calculation
   };
 
   const handleShare = () => {
-    // Share functionality with token consumption
+    // Share functionality with 10 token consumption
   };
 
-  const handleCollect = () => {
-    setIsCollected(!isCollected);
-    // Collection logic with token economics
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+    // Save logic with 8 token consumption
   };
 
   return (
@@ -105,30 +105,28 @@ export const VideoNFT = ({
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={isLiked ? "default" : "outline"}
-              onClick={handleLike}
-              className={isLiked ? "bg-gradient-secondary" : ""}
-            >
-              <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-              Like (10T)
-            </Button>
-            <Button size="sm" variant="outline" onClick={handleShare}>
-              <Share2 className="h-4 w-4 mr-1" />
-              Share (5T)
-            </Button>
-          </div>
+        <div className="flex items-center gap-2 pt-2">
           <Button
             size="sm"
-            variant={isCollected ? "default" : "secondary"}
-            onClick={handleCollect}
-            className={isCollected ? "bg-gradient-primary" : ""}
+            variant={isLiked ? "default" : "outline"}
+            onClick={handleLike}
+            className={isLiked ? "bg-neon-green/20 text-neon-green border-neon-green" : ""}
           >
-            <Star className={`h-4 w-4 mr-1 ${isCollected ? 'fill-current' : ''}`} />
-            {isCollected ? 'Collected' : 'Collect (50T)'}
+            <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
+            Like (5T)
+          </Button>
+          <Button
+            size="sm"
+            variant={isSaved ? "default" : "outline"}
+            onClick={handleSave}
+            className={isSaved ? "bg-neon-green/20 text-neon-green border-neon-green" : ""}
+          >
+            <Bookmark className={`h-4 w-4 mr-1 ${isSaved ? 'fill-current' : ''}`} />
+            Save (8T)
+          </Button>
+          <Button size="sm" variant="outline" onClick={handleShare}>
+            <Share2 className="h-4 w-4 mr-1" />
+            Share (10T)
           </Button>
         </div>
       </div>
