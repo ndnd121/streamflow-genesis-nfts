@@ -42,7 +42,7 @@ export const TokenEconomy = () => {
                 {(mockStats.totalSupply / 1000000).toFixed(0)}M
               </p>
             </div>
-            <Coins className="h-8 w-8 text-neon-purple" />
+            <Coins className="h-8 w-8 text-neon-green" />
           </div>
         </Card>
 
@@ -54,7 +54,7 @@ export const TokenEconomy = () => {
                 {mockStats.totalVideos.toLocaleString()}
               </p>
             </div>
-            <Video className="h-8 w-8 text-neon-cyan" />
+            <Video className="h-8 w-8 text-neon-emerald" />
           </div>
         </Card>
 
@@ -81,7 +81,7 @@ export const TokenEconomy = () => {
                 <TrendingUp className="h-5 w-5 text-neon-green" />
               </div>
             </div>
-            <Users className="h-8 w-8 text-neon-pink" />
+            <Users className="h-8 w-8 text-neon-gold" />
           </div>
         </Card>
       </div>

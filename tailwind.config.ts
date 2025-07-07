@@ -53,10 +53,10 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				neon: {
-					purple: 'hsl(var(--neon-purple))',
-					cyan: 'hsl(var(--neon-cyan))',
-					pink: 'hsl(var(--neon-pink))',
-					green: 'hsl(var(--neon-green))'
+					green: 'hsl(var(--neon-green))',
+					emerald: 'hsl(var(--neon-emerald))',
+					gold: 'hsl(var(--accent-gold))',
+					blue: 'hsl(var(--accent-blue))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
