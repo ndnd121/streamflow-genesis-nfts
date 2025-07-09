@@ -111,7 +111,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
                 <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  VideoToken
+                  BitTolk
                 </span>
               </div>
               <Badge variant="outline" className="border-neon-green text-neon-green">
@@ -244,7 +244,7 @@ const Index = () => {
             <div className="flex items-center justify-center gap-2">
               <div className="w-6 h-6 bg-gradient-primary rounded" />
               <span className="text-lg font-semibold bg-gradient-primary bg-clip-text text-transparent">
-                VideoToken Platform
+                BitTolk Platform
               </span>
             </div>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
@@ -252,7 +252,7 @@ const Index = () => {
               and distributed node computing.
             </p>
             <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <span>© 2024 VideoToken</span>
+              <span>© 2024 BitTolk</span>
               <span>•</span>
               <span>Privacy</span>
               <span>•</span>
