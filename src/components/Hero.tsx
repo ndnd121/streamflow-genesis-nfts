@@ -75,11 +75,11 @@ export const Hero = () => {
           </div>
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-12 py-4 text-xl">
-              <Zap className="h-6 w-6 mr-3" />
+          <div className="flex flex-col gap-6 justify-center items-center">
+            <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-16 py-6 text-3xl font-bold">
+              <Zap className="h-8 w-8 mr-4" />
               Start
-              <ArrowRight className="h-6 w-6 ml-3" />
+              <ArrowRight className="h-8 w-8 ml-4" />
             </Button>
             <Button size="lg" variant="outline" className="border-border hover:bg-secondary/20 px-8">
               <Play className="h-5 w-5 mr-2" />

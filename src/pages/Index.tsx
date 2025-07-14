@@ -151,7 +151,7 @@ const Index = () => {
               <Profile />
               <Button className="bg-gradient-secondary">
                 <Wallet className="h-4 w-4 mr-2" />
-                Connect Wallet
+                Log In
               </Button>
               <Button size="icon" variant="ghost" className="md:hidden">
                 <Menu className="h-4 w-4" />
