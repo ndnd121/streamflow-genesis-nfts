@@ -118,10 +118,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <BittokLogo size={32} className="drop-shadow-lg" />
-              <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent" style={{
-                fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive",
-                letterSpacing: '0.05em'
-              }}>
+              <span className="text-2xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
                 BITTOK
               </span>
             </div>

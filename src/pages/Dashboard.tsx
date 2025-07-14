@@ -121,9 +121,7 @@ const Dashboard = () => {
               </Link>
               <div className="flex items-center gap-3">
                 <BittokLogo size={32} className="drop-shadow-lg" />
-                <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent" style={{
-                  fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive"
-                }}>
+                <span className="text-xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
                   Dashboard
                 </span>
               </div>
