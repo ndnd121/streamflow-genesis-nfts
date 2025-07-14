@@ -9,6 +9,7 @@ interface VideoNFTProps {
   title: string;
   creator: string;
   thumbnail: string;
+  videoUrl: string;
   price: number;
   likes: number;
   shares: number;
@@ -22,6 +23,7 @@ export const VideoNFT = ({
   title, 
   creator, 
   thumbnail, 
+  videoUrl,
   price, 
   likes, 
   shares, 
@@ -46,6 +48,10 @@ export const VideoNFT = ({
     // Collection logic with token economics
   };
 
+  const handlePlay = () => {
+    window.open(videoUrl, '_blank');
+  };
+
   return (
     <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300 group">
       <div className="relative overflow-hidden rounded-t-lg">
@@ -62,6 +68,7 @@ export const VideoNFT = ({
         <Button 
           size="icon" 
           variant="secondary"
+          onClick={handlePlay}
           className="absolute top-4 right-4 bg-background/20 backdrop-blur-sm border-0"
         >
           <Play className="h-4 w-4" />

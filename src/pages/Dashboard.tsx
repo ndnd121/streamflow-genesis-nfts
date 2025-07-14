@@ -66,7 +66,7 @@ const Dashboard = () => {
         views: Math.floor(Math.random() * 10000),
         growthRate: Math.floor(Math.random() * 50),
         tokenReward: Math.floor(Math.random() * 100) + 25,
-        sourceUrl: videoUrl
+        videoUrl: videoUrl
       };
       
       setUploadedVideos(prev => [newVideo, ...prev]);
