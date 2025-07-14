@@ -29,7 +29,7 @@ export const Hero = () => {
               <br />
               <span className="text-foreground">Platform</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Transform streaming video data into NFTs. Earn tokens through AI-driven recommendations 
               and decentralized node computing.
             </p>
