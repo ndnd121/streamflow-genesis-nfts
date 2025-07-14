@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { VideoNFT } from "@/components/VideoNFT";
 import { TokenEconomy } from "@/components/TokenEconomy";
 import { NodeNetwork } from "@/components/NodeNetwork";
+import { Profile } from "@/components/Profile";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -147,6 +148,7 @@ const Index = () => {
               <Button size="icon" variant="ghost">
                 <Settings className="h-4 w-4" />
               </Button>
+              <Profile />
               <Button className="bg-gradient-secondary">
                 <Wallet className="h-4 w-4 mr-2" />
                 Connect Wallet
