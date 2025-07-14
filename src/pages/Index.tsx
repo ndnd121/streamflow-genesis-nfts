@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import { 
   Search, 
   Filter, 
@@ -147,9 +148,10 @@ const Index = () => {
 
             <div className="flex items-center gap-3">
               <Button 
+                asChild
                 className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 px-6 transition-all duration-300"
               >
-                Sign in
+                <Link to="/signin">Sign in</Link>
               </Button>
               <Button size="icon" variant="ghost" className="md:hidden">
                 <Menu className="h-4 w-4" />

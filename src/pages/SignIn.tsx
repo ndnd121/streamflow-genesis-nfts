@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Mail, Lock, User, Phone } from "lucide-react";
 
-const Register = () => {
+const SignIn = () => {
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,8 +26,11 @@ const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Registration data:', formData);
+    if (isLogin) {
+      console.log('Login data:', { email: formData.email, password: formData.password });
+    } else {
+      console.log('Registration data:', formData);
+    }
   };
 
   return (
@@ -47,29 +51,53 @@ const Register = () => {
               BITTOLK
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Join BitTolk</h1>
-          <p className="text-muted-foreground">Create your account to start tokenizing data</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            {isLogin ? 'Welcome Back' : 'Join BitTolk'}
+          </h1>
+          <p className="text-muted-foreground">
+            {isLogin ? 'Sign in to your account' : 'Create your account to start tokenizing data'}
+          </p>
         </div>
 
-        {/* Registration Form */}
+        {/* Auth Form */}
         <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="pl-10 bg-background/50"
-                  required
-                />
-              </div>
-            </div>
+            {!isLogin && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="pl-10 bg-background/50"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="pl-10 bg-background/50"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -89,22 +117,6 @@ const Register = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="pl-10 bg-background/50"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -112,7 +124,7 @@ const Register = () => {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Create a password"
+                  placeholder={isLogin ? "Enter your password" : "Create a password"}
                   value={formData.password}
                   onChange={handleInputChange}
                   className="pl-10 bg-background/50"
@@ -121,42 +133,47 @@ const Register = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="pl-10 bg-background/50"
-                  required
-                />
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="pl-10 bg-background/50"
+                    required
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <Button 
               type="submit" 
               className="w-full bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 py-6 text-lg transition-all duration-300"
             >
-              Create Account
+              {isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
         </Card>
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link to="/" className="text-primary hover:underline">
-            Sign in
-          </Link>
+          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <button 
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-primary hover:underline"
+          >
+            {isLogin ? 'Sign up' : 'Sign in'}
+          </button>
         </p>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default SignIn;
