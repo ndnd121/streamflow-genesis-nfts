@@ -76,10 +76,10 @@ export const Hero = () => {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-8">
-              <Zap className="h-5 w-5 mr-2" />
-              Start Mining NFTs
-              <ArrowRight className="h-5 w-5 ml-2" />
+            <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-12 py-4 text-xl">
+              <Zap className="h-6 w-6 mr-3" />
+              Start
+              <ArrowRight className="h-6 w-6 ml-3" />
             </Button>
             <Button size="lg" variant="outline" className="border-border hover:bg-secondary/20 px-8">
               <Play className="h-5 w-5 mr-2" />
