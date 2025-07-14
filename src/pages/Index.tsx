@@ -105,52 +105,43 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/30">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
-                <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  BitTolk
-                </span>
-              </div>
-              <Badge variant="outline" className="border-neon-green text-neon-green">
-                BETA
-              </Badge>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
+              <span className="text-xl font-bold text-foreground">
+                BITTOLK
+              </span>
             </div>
 
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-8">
               <Button
-                variant={activeTab === 'marketplace' ? 'gradient' : 'ghost'}
+                variant={activeTab === 'marketplace' ? 'ghost' : 'ghost'}
                 onClick={() => setActiveTab('marketplace')}
+                className={activeTab === 'marketplace' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
               >
-                Marketplace
+                BitTolk Ads
               </Button>
               <Button
-                variant={activeTab === 'economy' ? 'gradient' : 'ghost'}
-                onClick={() => setActiveTab('economy')}
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground"
               >
-                Token Economy
+                <span className="mr-2">$VDR</span>
               </Button>
               <Button
-                variant={activeTab === 'nodes' ? 'gradient' : 'ghost'}
-                onClick={() => setActiveTab('nodes')}
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground"
               >
-                Node Network
+                Learn
               </Button>
             </nav>
 
             <div className="flex items-center gap-3">
-              <Button size="icon" variant="ghost">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="ghost">
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Profile />
-              <Button className="bg-gradient-secondary">
-                Log In
+              <Button 
+                className="bg-gradient-primary hover:shadow-glow-primary text-white border-0 px-6"
+              >
+                Sign in
               </Button>
               <Button size="icon" variant="ghost" className="md:hidden">
                 <Menu className="h-4 w-4" />

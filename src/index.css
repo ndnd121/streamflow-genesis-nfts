@@ -6,46 +6,48 @@
 
 @layer base {
   :root {
-    --background: 222 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Vodra-inspired dark cosmic theme */
+    --background: 220 27% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 222 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 27% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 222 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 27% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 280 100% 50%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 275 100% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 27% 16%;
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 217 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 27% 16%;
+    --muted-foreground: 220 10% 65%;
 
-    --accent: 180 100% 50%;
-    --accent-foreground: 222 84% 4.9%;
+    --accent: 275 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217 32.6% 17.5%;
-    --input: 217 32.6% 17.5%;
-    --ring: 280 100% 50%;
+    --border: 220 27% 18%;
+    --input: 220 27% 18%;
+    --ring: 275 100% 65%;
 
-    --neon-purple: 280 100% 50%;
-    --neon-cyan: 180 100% 50%;
-    --neon-pink: 320 100% 50%;
-    --neon-green: 120 100% 50%;
+    /* Vodra-style colors */
+    --vodra-purple: 275 100% 65%;
+    --vodra-dark: 220 27% 8%;
+    --vodra-darker: 220 30% 6%;
+    --cosmic-blue: 220 100% 50%;
+    --cosmic-purple: 260 100% 65%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-cyan)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--neon-pink)), hsl(var(--neon-purple)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-green)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--vodra-purple)), hsl(var(--cosmic-purple)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--cosmic-blue)), hsl(var(--vodra-purple)));
+    --gradient-cosmic: linear-gradient(135deg, hsl(var(--vodra-darker)), hsl(var(--vodra-dark)));
     
-    --glow-primary: 0 0 20px hsl(var(--neon-purple) / 0.5);
-    --glow-accent: 0 0 20px hsl(var(--neon-cyan) / 0.5);
-    --glow-secondary: 0 0 20px hsl(var(--neon-pink) / 0.5);
+    --glow-primary: 0 0 30px hsl(var(--vodra-purple) / 0.3);
+    --glow-cosmic: 0 0 50px hsl(var(--cosmic-blue) / 0.2);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -115,5 +117,7 @@
 
   body {
     @apply bg-background text-foreground;
+    background: radial-gradient(ellipse at top, hsl(var(--vodra-dark)), hsl(var(--vodra-darker)));
+    min-height: 100vh;
   }
 }
