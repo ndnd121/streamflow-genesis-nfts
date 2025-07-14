@@ -117,17 +117,25 @@ const Index = () => {
 
             <nav className="hidden md:flex items-center gap-8">
               <Button
-                variant={activeTab === 'marketplace' ? 'ghost' : 'ghost'}
+                variant="ghost"
                 onClick={() => setActiveTab('marketplace')}
-                className={activeTab === 'marketplace' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
+                className={activeTab === 'marketplace' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
               >
                 BitTolk Ads
               </Button>
               <Button
                 variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
+                onClick={() => setActiveTab('economy')}
+                className={activeTab === 'economy' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
               >
-                <span className="mr-2">$VDR</span>
+                Token Economy
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab('nodes')}
+                className={activeTab === 'nodes' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
+              >
+                Node Network
               </Button>
               <Button
                 variant="ghost"
@@ -139,7 +147,7 @@ const Index = () => {
 
             <div className="flex items-center gap-3">
               <Button 
-                className="bg-gradient-primary hover:shadow-glow-primary text-white border-0 px-6"
+                className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 px-6 transition-all duration-300"
               >
                 Sign in
               </Button>

@@ -42,11 +42,22 @@
     --cosmic-blue: 220 100% 50%;
     --cosmic-purple: 260 100% 65%;
     
+    /* Neon colors for components */
+    --neon-purple: 275 100% 65%;
+    --neon-cyan: 180 100% 50%;
+    --neon-pink: 330 100% 65%;
+    --neon-green: 120 100% 50%;
+    
+    /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--vodra-purple)), hsl(var(--cosmic-purple)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--cosmic-blue)), hsl(var(--vodra-purple)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-purple)));
     --gradient-cosmic: linear-gradient(135deg, hsl(var(--vodra-darker)), hsl(var(--vodra-dark)));
     
+    /* Glows and shadows */
     --glow-primary: 0 0 30px hsl(var(--vodra-purple) / 0.3);
+    --glow-secondary: 0 0 25px hsl(var(--cosmic-blue) / 0.2);
+    --glow-accent: 0 0 35px hsl(var(--neon-cyan) / 0.25);
     --glow-cosmic: 0 0 50px hsl(var(--cosmic-blue) / 0.2);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
