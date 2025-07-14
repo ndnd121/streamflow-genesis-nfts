@@ -33,6 +33,19 @@ export const Hero = () => {
               Transform streaming video data into NFTs. Earn tokens through AI-driven recommendations 
               and decentralized node computing.
             </p>
+
+            {/* CTA buttons */}
+            <div className="flex flex-col gap-4 justify-center items-center">
+              <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-8 py-3 text-lg">
+                <Zap className="h-5 w-5 mr-2" />
+                Start
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+              <Button size="lg" variant="outline" className="border-border hover:bg-secondary/20 px-8">
+                <Play className="h-5 w-5 mr-2" />
+                Watch Demo
+              </Button>
+            </div>
           </div>
 
           {/* Feature highlights */}
@@ -74,18 +87,6 @@ export const Hero = () => {
             </Card>
           </div>
 
-          {/* CTA buttons */}
-          <div className="flex flex-col gap-6 justify-center items-center">
-            <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-16 py-6 text-3xl font-bold">
-              <Zap className="h-8 w-8 mr-4" />
-              Start
-              <ArrowRight className="h-8 w-8 ml-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="border-border hover:bg-secondary/20 px-8">
-              <Play className="h-5 w-5 mr-2" />
-              Watch Demo
-            </Button>
-          </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 max-w-2xl mx-auto">
