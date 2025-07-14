@@ -4,6 +4,7 @@ import { VideoNFT } from "@/components/VideoNFT";
 import { TokenEconomy } from "@/components/TokenEconomy";
 import { NodeNetwork } from "@/components/NodeNetwork";
 import { Profile } from "@/components/Profile";
+import { BittokLogo } from "@/components/BittokLogo";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -109,10 +110,13 @@ const Index = () => {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/30">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
-              <span className="text-xl font-bold text-foreground">
-                BITTOLK
+            <div className="flex items-center gap-3">
+              <BittokLogo size={32} className="drop-shadow-lg" />
+              <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent" style={{
+                fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive",
+                letterSpacing: '0.05em'
+              }}>
+                BITTOK
               </span>
             </div>
 
@@ -243,10 +247,12 @@ const Index = () => {
       <footer className="border-t border-border/50 bg-card/20 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-6 h-6 bg-gradient-primary rounded" />
-              <span className="text-lg font-semibold bg-gradient-primary bg-clip-text text-transparent">
-                BitTolk Platform
+            <div className="flex items-center justify-center gap-3">
+              <BittokLogo size={24} />
+              <span className="text-lg font-semibold bg-gradient-primary bg-clip-text text-transparent" style={{
+                fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive"
+              }}>
+                BITTOK Platform
               </span>
             </div>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
@@ -254,7 +260,7 @@ const Index = () => {
               and distributed node computing.
             </p>
             <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <span>© 2024 BitTolk</span>
+              <span>© 2024 BITTOK</span>
               <span>•</span>
               <span>Privacy</span>
               <span>•</span>

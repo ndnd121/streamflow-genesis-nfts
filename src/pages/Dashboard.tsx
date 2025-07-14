@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Youtube, Upload, User, Mail, Link as LinkIcon, Settings, Play, Eye, Heart, Share2, Star, Calendar, CheckCircle, Wallet, Coffee } from "lucide-react";
 import { VideoNFT } from "@/components/VideoNFT";
+import { BittokLogo } from "@/components/BittokLogo";
 
 const Dashboard = () => {
   const [userProfile, setUserProfile] = useState({
@@ -118,9 +119,13 @@ const Dashboard = () => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to Home
               </Link>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
-                <span className="text-xl font-bold text-foreground">Dashboard</span>
+              <div className="flex items-center gap-3">
+                <BittokLogo size={32} className="drop-shadow-lg" />
+                <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent" style={{
+                  fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive"
+                }}>
+                  Dashboard
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
