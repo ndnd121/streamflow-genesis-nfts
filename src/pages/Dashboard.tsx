@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Youtube, Upload, User, Mail, Link as LinkIcon, Settings, Play, Eye, Heart, Share2 } from "lucide-react";
+import { ArrowLeft, Youtube, Upload, User, Mail, Link as LinkIcon, Settings, Play, Eye, Heart, Share2, Star, Calendar, CheckCircle, Wallet, Coffee } from "lucide-react";
 import { VideoNFT } from "@/components/VideoNFT";
 
 const Dashboard = () => {
@@ -23,12 +23,28 @@ const Dashboard = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [uploadedVideos, setUploadedVideos] = useState<any[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [lastCheckinDate, setLastCheckinDate] = useState<string>('');
+  const [isCheckedInToday, setIsCheckedInToday] = useState(false);
+  const [checkinStreak, setCheckinStreak] = useState(0);
 
   const handleProfileChange = (field: string, value: string) => {
     setUserProfile(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const extractVideoThumbnail = (url: string) => {
+    if (url.includes('youtube.com/watch?v=')) {
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    }
+    if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    }
+    // For TikTok and X, we'll use placeholder for now as they require API access
+    return "/placeholder.svg";
   };
 
   const handleVideoUpload = async () => {
@@ -42,7 +58,7 @@ const Dashboard = () => {
         id: Date.now().toString(),
         title: `Video from ${extractPlatform(videoUrl)}`,
         creator: userProfile.name || "Unknown Creator",
-        thumbnail: "/placeholder.svg",
+        thumbnail: extractVideoThumbnail(videoUrl),
         price: Math.floor(Math.random() * 100) + 10,
         likes: Math.floor(Math.random() * 1000),
         shares: Math.floor(Math.random() * 500),
@@ -67,11 +83,25 @@ const Dashboard = () => {
 
   const isPlatformConnected = (platform: string) => {
     switch (platform) {
-      case 'youtube': return !!userProfile.youtubeUrl;
-      case 'tiktok': return !!userProfile.tiktokUrl;
-      case 'x': return !!userProfile.xUrl;
+      case 'youtube': return userProfile.youtubeUrl === 'connected';
+      case 'tiktok': return userProfile.tiktokUrl === 'connected';
+      case 'x': return userProfile.xUrl === 'connected';
       default: return false;
     }
+  };
+
+  const handleDailyCheckin = () => {
+    const today = new Date().toDateString();
+    if (!isCheckedInToday) {
+      setLastCheckinDate(today);
+      setIsCheckedInToday(true);
+      setCheckinStreak(prev => prev + 1);
+      // Add BTK rewards logic here
+    }
+  };
+
+  const canCheckin = () => {
+    return isPlatformConnected('youtube') || isPlatformConnected('tiktok') || isPlatformConnected('x');
   };
 
   return (
@@ -104,7 +134,7 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-card/50 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-4 bg-card/50 backdrop-blur-sm">
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               Upload Video
@@ -116,6 +146,10 @@ const Dashboard = () => {
             <TabsTrigger value="connect" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Connect Platforms
+            </TabsTrigger>
+            <TabsTrigger value="checkin" className="flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              Daily Check-in
             </TabsTrigger>
           </TabsList>
 
@@ -238,33 +272,29 @@ const Dashboard = () => {
               {/* YouTube */}
               <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <Youtube className="h-8 w-8 text-red-500" />
+                  <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                    <Youtube className="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">YouTube</h3>
-                    <p className="text-sm text-muted-foreground">Connect your YouTube channel</p>
+                    <p className="text-sm text-muted-foreground">Connect via YouTube API</p>
                   </div>
                   
                   {isPlatformConnected('youtube') ? (
-                    <Badge variant="secondary" className="bg-green-500/20 text-green-500">
+                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
                       Connected
                     </Badge>
                   ) : (
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="YouTube channel URL"
-                        value={userProfile.youtubeUrl}
-                        onChange={(e) => handleProfileChange('youtubeUrl', e.target.value)}
-                        className="bg-background/50"
-                      />
-                      <Button 
-                        size="sm" 
-                        className="w-full bg-red-500 hover:bg-red-600 text-white"
-                      >
-                        Connect
-                      </Button>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0"
+                      onClick={() => {
+                        // Simulate OAuth connection
+                        handleProfileChange('youtubeUrl', 'connected');
+                      }}
+                    >
+                      Connect with YouTube
+                    </Button>
                   )}
                 </div>
               </Card>
@@ -272,35 +302,31 @@ const Dashboard = () => {
               {/* TikTok */}
               <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">TT</span>
+                  <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto">
+                    <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                      <span className="text-accent-foreground font-bold text-sm">TT</span>
                     </div>
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">TikTok</h3>
-                    <p className="text-sm text-muted-foreground">Connect your TikTok account</p>
+                    <p className="text-sm text-muted-foreground">Connect via TikTok API</p>
                   </div>
                   
                   {isPlatformConnected('tiktok') ? (
-                    <Badge variant="secondary" className="bg-green-500/20 text-green-500">
+                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
                       Connected
                     </Badge>
                   ) : (
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="TikTok profile URL"
-                        value={userProfile.tiktokUrl}
-                        onChange={(e) => handleProfileChange('tiktokUrl', e.target.value)}
-                        className="bg-background/50"
-                      />
-                      <Button 
-                        size="sm" 
-                        className="w-full bg-pink-500 hover:bg-pink-600 text-white"
-                      >
-                        Connect
-                      </Button>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-gradient-accent hover:shadow-glow-accent text-accent-foreground border-0"
+                      onClick={() => {
+                        // Simulate OAuth connection
+                        handleProfileChange('tiktokUrl', 'connected');
+                      }}
+                    >
+                      Connect with TikTok
+                    </Button>
                   )}
                 </div>
               </Card>
@@ -308,39 +334,115 @@ const Dashboard = () => {
               {/* X (Twitter) */}
               <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">𝕏</span>
+                  <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto">
+                    <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
+                      <span className="text-secondary-foreground font-bold text-lg">𝕏</span>
                     </div>
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">X (Twitter)</h3>
-                    <p className="text-sm text-muted-foreground">Connect your X account</p>
+                    <p className="text-sm text-muted-foreground">Connect via X API</p>
                   </div>
                   
                   {isPlatformConnected('x') ? (
-                    <Badge variant="secondary" className="bg-green-500/20 text-green-500">
+                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
                       Connected
                     </Badge>
                   ) : (
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="X profile URL"
-                        value={userProfile.xUrl}
-                        onChange={(e) => handleProfileChange('xUrl', e.target.value)}
-                        className="bg-background/50"
-                      />
-                      <Button 
-                        size="sm" 
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-                      >
-                        Connect
-                      </Button>
-                    </div>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-gradient-secondary hover:shadow-glow-secondary text-secondary-foreground border-0"
+                      onClick={() => {
+                        // Simulate OAuth connection
+                        handleProfileChange('xUrl', 'connected');
+                      }}
+                    >
+                      Connect with X
+                    </Button>
                   )}
                 </div>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Daily Check-in Tab */}
+          <TabsContent value="checkin" className="space-y-6">
+            <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
+              <div className="text-center space-y-6">
+                <div className="space-y-2">
+                  <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center mx-auto">
+                    <Coffee className="h-10 w-10 text-primary-foreground" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">Daily Check-in</h2>
+                  <p className="text-muted-foreground">Complete daily tasks to earn BTKs</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="p-4 bg-background/50">
+                    <div className="text-center space-y-2">
+                      <CheckCircle className={`h-8 w-8 mx-auto ${isPlatformConnected('youtube') || isPlatformConnected('tiktok') || isPlatformConnected('x') ? 'text-green-500' : 'text-muted-foreground'}`} />
+                      <h3 className="font-medium text-foreground">Connect Platform</h3>
+                      <p className="text-sm text-muted-foreground">Connect at least one social platform</p>
+                      <Badge variant={canCheckin() ? "secondary" : "outline"} className={canCheckin() ? "bg-green-500/20 text-green-500" : ""}>
+                        {canCheckin() ? "✓ Complete" : "Pending"}
+                      </Badge>
+                    </div>
+                  </Card>
+
+                  <Card className="p-4 bg-background/50">
+                    <div className="text-center space-y-2">
+                      <Mail className={`h-8 w-8 mx-auto ${userProfile.email ? 'text-green-500' : 'text-muted-foreground'}`} />
+                      <h3 className="font-medium text-foreground">Bind Email</h3>
+                      <p className="text-sm text-muted-foreground">Add your email address</p>
+                      <Badge variant={userProfile.email ? "secondary" : "outline"} className={userProfile.email ? "bg-green-500/20 text-green-500" : ""}>
+                        {userProfile.email ? "✓ Complete" : "Pending"}
+                      </Badge>
+                    </div>
+                  </Card>
+
+                  <Card className="p-4 bg-background/50">
+                    <div className="text-center space-y-2">
+                      <Wallet className="h-8 w-8 mx-auto text-muted-foreground" />
+                      <h3 className="font-medium text-foreground">Connect Wallet</h3>
+                      <p className="text-sm text-muted-foreground">Connect your crypto wallet</p>
+                      <Badge variant="outline">
+                        Coming Soon
+                      </Badge>
+                    </div>
+                  </Card>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">{checkinStreak}</div>
+                      <div className="text-sm text-muted-foreground">Days Streak</div>
+                    </div>
+                    <div className="w-px h-8 bg-border" />
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">+50</div>
+                      <div className="text-sm text-muted-foreground">BTKs Today</div>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    disabled={!canCheckin() || !userProfile.email || isCheckedInToday}
+                    onClick={handleDailyCheckin}
+                    className="w-full bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 disabled:opacity-50"
+                  >
+                    <Calendar className="h-5 w-5 mr-2" />
+                    {isCheckedInToday ? "Checked in Today!" : "Daily Check-in (+50 BTKs)"}
+                  </Button>
+                  
+                  {(!canCheckin() || !userProfile.email) && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      Complete the requirements above to enable daily check-in
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

@@ -103,38 +103,33 @@ export const VideoNFT = ({
           <div className="text-lg font-bold text-background">+{tokenReward > 0 ? tokenReward : 25} BTKs</div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 gap-2">
-          <div className="flex gap-2 flex-1">
-            <Button
-              size="sm"
-              variant={isLiked ? "default" : "outline"}
-              onClick={handleLike}
-              className={`flex-1 ${isLiked ? "bg-gradient-secondary" : "border-primary/30 hover:bg-primary/10"}`}
-            >
-              <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-              <span className="hidden sm:inline">Like (10)</span>
-              <span className="sm:hidden">10</span>
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              onClick={handleShare}
-              className="flex-1 border-primary/30 hover:bg-primary/10"
-            >
-              <Share2 className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">Share (5)</span>
-              <span className="sm:hidden">5</span>
-            </Button>
-          </div>
+        <div className="flex gap-2 pt-2">
+          <Button
+            size="sm"
+            variant={isLiked ? "default" : "outline"}
+            onClick={handleLike}
+            className={`flex-1 min-w-0 ${isLiked ? "bg-gradient-secondary text-secondary-foreground" : "border-primary/30 hover:bg-primary/10"}`}
+          >
+            <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
+            <span className="text-xs">10</span>
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={handleShare}
+            className="flex-1 min-w-0 border-primary/30 hover:bg-primary/10"
+          >
+            <Share2 className="h-4 w-4 mr-1" />
+            <span className="text-xs">5</span>
+          </Button>
           <Button
             size="sm"
             variant={isCollected ? "default" : "secondary"}
             onClick={handleCollect}
-            className={`${isCollected ? "bg-gradient-primary" : "bg-secondary/50 hover:bg-secondary"}`}
+            className={`flex-1 min-w-0 ${isCollected ? "bg-gradient-primary text-primary-foreground" : "bg-secondary/50 hover:bg-secondary"}`}
           >
             <Star className={`h-4 w-4 mr-1 ${isCollected ? 'fill-current' : ''}`} />
-            <span className="hidden sm:inline">{isCollected ? 'Collected' : 'Collect (50)'}</span>
-            <span className="sm:hidden">{isCollected ? '✓' : '50'}</span>
+            <span className="text-xs">{isCollected ? '✓' : '50'}</span>
           </Button>
         </div>
       </div>
