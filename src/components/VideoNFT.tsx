@@ -72,7 +72,7 @@ export const VideoNFT = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground">
-              {price} TOKENS
+              {price} BTKs
             </Badge>
             {growthRate > 0 && (
               <Badge variant="outline" className="border-neon-green text-neon-green">
@@ -98,37 +98,43 @@ export const VideoNFT = ({
           </div>
         </div>
 
-        {tokenReward > 0 && (
-          <div className="bg-gradient-accent rounded-lg p-3 text-center">
-            <div className="text-sm text-foreground font-medium">Potential Reward</div>
-            <div className="text-lg font-bold text-background">+{tokenReward} TOKENS</div>
-          </div>
-        )}
+        <div className="bg-gradient-accent rounded-lg p-3 text-center">
+          <div className="text-sm text-foreground font-medium">Potential Reward</div>
+          <div className="text-lg font-bold text-background">+{tokenReward > 0 ? tokenReward : 25} BTKs</div>
+        </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between pt-2 gap-2">
+          <div className="flex gap-2 flex-1">
             <Button
               size="sm"
               variant={isLiked ? "default" : "outline"}
               onClick={handleLike}
-              className={isLiked ? "bg-gradient-secondary" : ""}
+              className={`flex-1 ${isLiked ? "bg-gradient-secondary" : "border-primary/30 hover:bg-primary/10"}`}
             >
               <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-              Like (10T)
+              <span className="hidden sm:inline">Like (10)</span>
+              <span className="sm:hidden">10</span>
             </Button>
-            <Button size="sm" variant="outline" onClick={handleShare}>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={handleShare}
+              className="flex-1 border-primary/30 hover:bg-primary/10"
+            >
               <Share2 className="h-4 w-4 mr-1" />
-              Share (5T)
+              <span className="hidden sm:inline">Share (5)</span>
+              <span className="sm:hidden">5</span>
             </Button>
           </div>
           <Button
             size="sm"
             variant={isCollected ? "default" : "secondary"}
             onClick={handleCollect}
-            className={isCollected ? "bg-gradient-primary" : ""}
+            className={`${isCollected ? "bg-gradient-primary" : "bg-secondary/50 hover:bg-secondary"}`}
           >
             <Star className={`h-4 w-4 mr-1 ${isCollected ? 'fill-current' : ''}`} />
-            {isCollected ? 'Collected' : 'Collect (50T)'}
+            <span className="hidden sm:inline">{isCollected ? 'Collected' : 'Collect (50)'}</span>
+            <span className="sm:hidden">{isCollected ? '✓' : '50'}</span>
           </Button>
         </div>
       </div>
