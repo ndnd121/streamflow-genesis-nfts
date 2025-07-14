@@ -145,12 +145,6 @@ const Index = () => {
               >
                 Node Network
               </Button>
-              <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Learn
-              </Button>
             </nav>
 
             <div className="flex items-center gap-3">
