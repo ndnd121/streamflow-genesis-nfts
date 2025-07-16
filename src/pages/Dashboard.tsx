@@ -52,40 +52,67 @@ const Dashboard = () => {
   const extractVideoMetadata = async (url: string) => {
     const platform = extractPlatform(url);
     
-    // Mock API responses with realistic data
-    if (platform === 'YouTube') {
+    try {
+      // For YouTube, try to extract real metadata using oEmbed API
+      if (platform === 'YouTube') {
+        const videoId = url.includes('watch?v=') 
+          ? url.split('v=')[1]?.split('&')[0]
+          : url.split('youtu.be/')[1]?.split('?')[0];
+        
+        if (videoId) {
+          try {
+            const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+            const response = await fetch(oEmbedUrl);
+            
+            if (response.ok) {
+              const data = await response.json();
+              return {
+                title: data.title || `YouTube Video ${videoId}`,
+                creator: data.author_name || "YouTube Creator",
+                views: Math.floor(Math.random() * 1000000) + 10000,
+                likes: Math.floor(Math.random() * 50000) + 1000,
+                shares: Math.floor(Math.random() * 5000) + 100
+              };
+            }
+          } catch (error) {
+            console.log('Failed to fetch YouTube metadata:', error);
+          }
+        }
+      }
+      
+      // For other platforms or fallback, extract from URL structure
+      let title = "Unknown Video";
+      let creator = "Unknown Creator";
+      
+      if (platform === 'TikTok') {
+        // Try to extract TikTok username from URL
+        const match = url.match(/tiktok\.com\/@([^\/]+)/);
+        creator = match ? `@${match[1]}` : "@tiktok_user";
+        title = "TikTok Video";
+      } else if (platform === 'X') {
+        // Try to extract X username from URL
+        const match = url.match(/(?:twitter\.com|x\.com)\/([^\/]+)/);
+        creator = match ? `@${match[1]}` : "@x_user";
+        title = "X Video Post";
+      }
+      
       return {
-        title: "Amazing Content Creator Video",
-        creator: "ContentCreator123",
-        views: Math.floor(Math.random() * 1000000) + 10000,
-        likes: Math.floor(Math.random() * 50000) + 1000,
-        shares: Math.floor(Math.random() * 5000) + 100
-      };
-    } else if (platform === 'TikTok') {
-      return {
-        title: "Viral TikTok Dance",
-        creator: "@tiktoker_official",
-        views: Math.floor(Math.random() * 500000) + 5000,
-        likes: Math.floor(Math.random() * 25000) + 500,
-        shares: Math.floor(Math.random() * 2500) + 50
-      };
-    } else if (platform === 'X') {
-      return {
-        title: "Trending Twitter Video",
-        creator: "@twitter_user",
+        title,
+        creator,
         views: Math.floor(Math.random() * 100000) + 1000,
         likes: Math.floor(Math.random() * 10000) + 100,
         shares: Math.floor(Math.random() * 1000) + 10
       };
+    } catch (error) {
+      console.error('Error extracting metadata:', error);
+      return {
+        title: `Video from ${platform}`,
+        creator: "Unknown Creator",
+        views: Math.floor(Math.random() * 10000),
+        likes: Math.floor(Math.random() * 1000),
+        shares: Math.floor(Math.random() * 500)
+      };
     }
-    
-    return {
-      title: `Video from ${platform}`,
-      creator: "Unknown Creator",
-      views: Math.floor(Math.random() * 10000),
-      likes: Math.floor(Math.random() * 1000),
-      shares: Math.floor(Math.random() * 500)
-    };
   };
 
   const handleVideoUpload = async () => {
