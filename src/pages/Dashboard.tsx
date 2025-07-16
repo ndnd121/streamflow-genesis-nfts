@@ -48,31 +48,79 @@ const Dashboard = () => {
     return "/placeholder.svg";
   };
 
+  // Extract video metadata from platform URLs
+  const extractVideoMetadata = async (url: string) => {
+    const platform = extractPlatform(url);
+    
+    // Mock API responses with realistic data
+    if (platform === 'YouTube') {
+      return {
+        title: "Amazing Content Creator Video",
+        creator: "ContentCreator123",
+        views: Math.floor(Math.random() * 1000000) + 10000,
+        likes: Math.floor(Math.random() * 50000) + 1000,
+        shares: Math.floor(Math.random() * 5000) + 100
+      };
+    } else if (platform === 'TikTok') {
+      return {
+        title: "Viral TikTok Dance",
+        creator: "@tiktoker_official",
+        views: Math.floor(Math.random() * 500000) + 5000,
+        likes: Math.floor(Math.random() * 25000) + 500,
+        shares: Math.floor(Math.random() * 2500) + 50
+      };
+    } else if (platform === 'X') {
+      return {
+        title: "Trending Twitter Video",
+        creator: "@twitter_user",
+        views: Math.floor(Math.random() * 100000) + 1000,
+        likes: Math.floor(Math.random() * 10000) + 100,
+        shares: Math.floor(Math.random() * 1000) + 10
+      };
+    }
+    
+    return {
+      title: `Video from ${platform}`,
+      creator: "Unknown Creator",
+      views: Math.floor(Math.random() * 10000),
+      likes: Math.floor(Math.random() * 1000),
+      shares: Math.floor(Math.random() * 500)
+    };
+  };
+
   const handleVideoUpload = async () => {
     if (!videoUrl.trim()) return;
     
     setIsUploading(true);
     
-    // Simulate API call to parse video
-    setTimeout(() => {
-      const newVideo = {
-        id: Date.now().toString(),
-        title: `Video from ${extractPlatform(videoUrl)}`,
-        creator: userProfile.name || "Unknown Creator",
-        thumbnail: extractVideoThumbnail(videoUrl),
-        price: Math.floor(Math.random() * 100) + 10,
-        likes: Math.floor(Math.random() * 1000),
-        shares: Math.floor(Math.random() * 500),
-        views: Math.floor(Math.random() * 10000),
-        growthRate: Math.floor(Math.random() * 50),
-        tokenReward: Math.floor(Math.random() * 100) + 25,
-        videoUrl: videoUrl
-      };
+    try {
+      // Extract video metadata from platform
+      const metadata = await extractVideoMetadata(videoUrl);
       
-      setUploadedVideos(prev => [newVideo, ...prev]);
-      setVideoUrl('');
+      // Simulate API call processing delay
+      setTimeout(() => {
+        const newVideo = {
+          id: Date.now().toString(),
+          title: metadata.title,
+          creator: metadata.creator,
+          thumbnail: extractVideoThumbnail(videoUrl),
+          price: Math.floor(Math.random() * 100) + 10,
+          likes: metadata.likes,
+          shares: metadata.shares,
+          views: metadata.views,
+          growthRate: Math.floor(Math.random() * 50),
+          tokenReward: Math.floor(Math.random() * 100) + 25,
+          videoUrl: videoUrl
+        };
+        
+        setUploadedVideos(prev => [newVideo, ...prev]);
+        setVideoUrl('');
+        setIsUploading(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error extracting video metadata:', error);
       setIsUploading(false);
-    }, 2000);
+    }
   };
 
   const extractPlatform = (url: string) => {
