@@ -32,12 +32,11 @@ interface GenerationStep {
 // Runware API service for video generation
 class RunwareService {
   private static API_ENDPOINT = "https://api.runware.ai/v1";
-  private static API_KEY = import.meta.env.VITE_RUNWARE_API_KEY || "";
   
-  static async generateVideo(prompt: string, style: string, duration: number): Promise<string> {
+  static async generateVideo(prompt: string, style: string, duration: number, apiKey: string): Promise<string> {
     try {
-      if (!this.API_KEY) {
-        throw new Error("API key not configured. Please set VITE_RUNWARE_API_KEY environment variable.");
+      if (!apiKey) {
+        throw new Error("API key is required. Please get one at https://runware.ai/");
       }
       
       const enhancedPrompt = `${prompt}, ${style} style, high quality, detailed`;
@@ -50,15 +49,15 @@ class RunwareService {
         body: JSON.stringify([
           {
             taskType: "authentication",
-            apiKey: this.API_KEY
+            apiKey: apiKey
           },
           {
-            taskType: "videoGeneration", // Using Runware's video generation capability
+            taskType: "videoGeneration",
             taskUUID: crypto.randomUUID(),
             positivePrompt: enhancedPrompt,
             width: 1024,
             height: 576,
-            numberOfFrames: Math.min(Math.max(duration * 8, 14), 25), // Convert seconds to frames
+            numberOfFrames: Math.min(Math.max(duration * 8, 14), 25),
             model: "runware:video@1",
             outputFormat: "MP4"
           }
@@ -71,7 +70,6 @@ class RunwareService {
 
       const data = await response.json();
       
-      // Extract video URL from the response
       const videoResult = data.data.find((item: any) => item.taskType === "videoGeneration");
       
       if (!videoResult || !videoResult.videoURL) {
@@ -90,6 +88,7 @@ export const AIVideoGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [duration, setDuration] = useState(15);
   const [style, setStyle] = useState('realistic');
+  const [apiKey, setApiKey] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [activeNodes, setActiveNodes] = useState(12);
@@ -115,7 +114,7 @@ export const AIVideoGenerator = () => {
     return () => clearInterval(interval);
   }, []);
 
-const handleGenerate = async () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Missing Prompt",
@@ -128,9 +127,9 @@ const handleGenerate = async () => {
     setIsGenerating(true);
     setGeneratedVideo(null);
     
-      try {
-        // Step 1: Initialize generation
-        updateStepProgress(0, 'processing', 20);
+    try {
+      // Step 1: Initialize generation
+      updateStepProgress(0, 'processing', 20);
         
         // Step 2: Process prompt
         setTimeout(() => updateStepProgress(0, 'completed', 100), 1000);
@@ -143,7 +142,7 @@ const handleGenerate = async () => {
         setTimeout(() => updateStepProgress(2, 'processing', 80), 9000);
         
         // Actual API call to Runware
-        const videoURL = await RunwareService.generateVideo(prompt, style, duration);
+        const videoURL = await RunwareService.generateVideo(prompt, style, duration, apiKey);
       
       // Step 4: Apply effects
       setTimeout(() => updateStepProgress(2, 'completed', 100), 10000);
@@ -268,6 +267,22 @@ const handleGenerate = async () => {
                   className="min-h-[120px] bg-background/50"
                   disabled={isGenerating}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="apiKey">Runware API Key</Label>
+                <Input
+                  id="apiKey"
+                  type="password"
+                  placeholder="Enter your Runware API key (get one at https://runware.ai/)"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  disabled={isGenerating}
+                  className="bg-background/50"
+                />
+                <p className="text-xs text-muted-foreground">
+                  需要Runware API密钥才能生成视频。请访问 https://runware.ai/ 获取密钥。
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
