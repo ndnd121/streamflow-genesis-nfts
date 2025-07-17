@@ -5,6 +5,7 @@ import { TokenEconomy } from "@/components/TokenEconomy";
 import { NodeNetwork } from "@/components/NodeNetwork";
 import { Profile } from "@/components/Profile";
 import { BittokLogo } from "@/components/BittokLogo";
+import { AIVideoGenerator } from "@/components/AIVideoGenerator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -133,6 +134,13 @@ const Index = () => {
               </Button>
               <Button
                 variant="ghost"
+                onClick={() => setActiveTab('aivideo')}
+                className={activeTab === 'aivideo' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
+              >
+                AI Video
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => setActiveTab('economy')}
                 className={activeTab === 'economy' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
               >
@@ -236,6 +244,7 @@ const Index = () => {
           </div>
         )}
 
+        {activeTab === 'aivideo' && <AIVideoGenerator />}
         {activeTab === 'economy' && <TokenEconomy />}
         {activeTab === 'nodes' && <NodeNetwork />}
       </main>
