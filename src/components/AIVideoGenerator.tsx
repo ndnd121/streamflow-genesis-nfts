@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, 
   Video, 
@@ -17,7 +18,9 @@ import {
   Users,
   PlayCircle,
   Download,
-  Share2
+  Share2,
+  Key,
+  AlertCircle
 } from "lucide-react";
 
 interface GenerationStep {
@@ -35,45 +38,168 @@ export const AIVideoGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [activeNodes, setActiveNodes] = useState(12);
+  const [replicateKey, setReplicateKey] = useState(() => 
+    localStorage.getItem('replicate_api_key') || ''
+  );
+  const [showApiKeyInput, setShowApiKeyInput] = useState(!replicateKey);
   const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([
-    { id: '1', name: 'Text Analysis & Processing', status: 'pending', progress: 0 },
-    { id: '2', name: 'Scene Planning & Storyboard', status: 'pending', progress: 0 },
-    { id: '3', name: 'Visual Element Generation', status: 'pending', progress: 0 },
-    { id: '4', name: 'Motion & Animation Synthesis', status: 'pending', progress: 0 },
-    { id: '5', name: 'Audio Track Generation', status: 'pending', progress: 0 },
-    { id: '6', name: 'Final Assembly & Rendering', status: 'pending', progress: 0 }
+    { id: '1', name: 'Initializing prediction', status: 'pending', progress: 0 },
+    { id: '2', name: 'Processing text prompt', status: 'pending', progress: 0 },
+    { id: '3', name: 'Generating video frames', status: 'pending', progress: 0 },
+    { id: '4', name: 'Applying motion effects', status: 'pending', progress: 0 },
+    { id: '5', name: 'Finalizing output', status: 'pending', progress: 0 }
   ]);
 
+  const { toast } = useToast();
+
+  const saveApiKey = () => {
+    if (replicateKey.trim()) {
+      localStorage.setItem('replicate_api_key', replicateKey);
+      setShowApiKeyInput(false);
+      toast({
+        title: "API Key Saved",
+        description: "Your Replicate API key has been saved locally.",
+      });
+    }
+  };
+
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim()) {
+      toast({
+        title: "Missing Prompt",
+        description: "Please enter a video description.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!replicateKey.trim()) {
+      toast({
+        title: "Missing API Key",
+        description: "Please enter your Replicate API key.",
+        variant: "destructive",
+      });
+      setShowApiKeyInput(true);
+      return;
+    }
     
     setIsGenerating(true);
     setGeneratedVideo(null);
     
-    // Simulate distributed generation process
-    for (let i = 0; i < generationSteps.length; i++) {
+    try {
+      // Step 1: Initialize prediction
       const newSteps = [...generationSteps];
-      newSteps[i].status = 'processing';
-      newSteps[i].nodeId = `Node-${Math.floor(Math.random() * 100) + 1}`;
-      setGenerationSteps(newSteps);
+      newSteps[0].status = 'processing';
+      setGenerationSteps([...newSteps]);
+
+      const enhancedPrompt = `${prompt}, ${style} style, high quality, detailed`;
       
-      // Simulate progress
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        const progressSteps = [...newSteps];
-        progressSteps[i].progress = progress;
-        setGenerationSteps(progressSteps);
+      const response = await fetch('https://api.replicate.com/v1/predictions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${replicateKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          version: "9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351", // Stable Video Diffusion
+          input: {
+            prompt: enhancedPrompt,
+            image: null, // Text-to-video mode
+            width: 1024,
+            height: 576,
+            num_frames: Math.min(Math.max(duration * 8, 14), 25), // Convert seconds to frames
+            motion_strength: 0.7
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
       }
+
+      const prediction = await response.json();
       
-      newSteps[i].status = 'completed';
-      setGenerationSteps(newSteps);
-    }
-    
-    // Simulate video generation completion
-    setTimeout(() => {
-      setGeneratedVideo('https://www.youtube.com/embed/dQw4w9WgXcQ');
+      newSteps[0].status = 'completed';
+      newSteps[0].progress = 100;
+      newSteps[1].status = 'processing';
+      setGenerationSteps([...newSteps]);
+
+      // Step 2: Poll for completion
+      let predictionStatus = prediction;
+      let stepIndex = 1;
+
+      while (predictionStatus.status === 'starting' || predictionStatus.status === 'processing') {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const statusResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+          headers: {
+            'Authorization': `Token ${replicateKey}`,
+          },
+        });
+
+        predictionStatus = await statusResponse.json();
+        
+        // Update progress
+        if (stepIndex < generationSteps.length) {
+          const currentSteps = [...generationSteps];
+          
+          // Complete previous steps
+          for (let i = 0; i < stepIndex; i++) {
+            currentSteps[i].status = 'completed';
+            currentSteps[i].progress = 100;
+          }
+          
+          // Update current step
+          currentSteps[stepIndex].status = 'processing';
+          currentSteps[stepIndex].progress = Math.min(
+            currentSteps[stepIndex].progress + 20, 
+            90
+          );
+          
+          setGenerationSteps([...currentSteps]);
+          
+          if (currentSteps[stepIndex].progress >= 90 && stepIndex < generationSteps.length - 1) {
+            stepIndex++;
+          }
+        }
+      }
+
+      // Complete all steps
+      const finalSteps = generationSteps.map(step => ({
+        ...step,
+        status: 'completed' as const,
+        progress: 100
+      }));
+      setGenerationSteps(finalSteps);
+
+      if (predictionStatus.status === 'succeeded' && predictionStatus.output) {
+        setGeneratedVideo(predictionStatus.output);
+        toast({
+          title: "Video Generated!",
+          description: "Your AI video has been generated successfully.",
+        });
+      } else {
+        throw new Error(predictionStatus.error || 'Video generation failed');
+      }
+
+    } catch (error) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "An error occurred during video generation.",
+        variant: "destructive",
+      });
+      
+      // Reset steps on error
+      setGenerationSteps(steps => steps.map(step => ({
+        ...step,
+        status: 'pending',
+        progress: 0,
+        nodeId: undefined
+      })));
+    } finally {
       setIsGenerating(false);
-    }, 1000);
+    }
   };
 
   const resetGeneration = () => {
@@ -119,6 +245,53 @@ export const AIVideoGenerator = () => {
           </div>
         </div>
       </div>
+
+      {/* API Key Input */}
+      {showApiKeyInput && (
+        <Card className="border-yellow-200 bg-yellow-50/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-yellow-800">
+              <Key className="h-5 w-5" />
+              Replicate API Configuration
+            </CardTitle>
+            <CardDescription className="text-yellow-700">
+              Enter your Replicate API key to enable real AI video generation. Get your API key from{" "}
+              <a 
+                href="https://replicate.com/account/api-tokens" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-yellow-900"
+              >
+                replicate.com
+              </a>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2 p-3 bg-yellow-100 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-yellow-600" />
+              <p className="text-sm text-yellow-800">
+                Your API key will be stored locally in your browser and never sent to our servers.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="api-key">Replicate API Key</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="api-key"
+                  type="password"
+                  placeholder="r8_..."
+                  value={replicateKey}
+                  onChange={(e) => setReplicateKey(e.target.value)}
+                  className="bg-background"
+                />
+                <Button onClick={saveApiKey} disabled={!replicateKey.trim()}>
+                  Save
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Generation Panel */}
@@ -180,7 +353,7 @@ export const AIVideoGenerator = () => {
               <div className="flex items-center gap-4">
                 <Button
                   onClick={handleGenerate}
-                  disabled={!prompt.trim() || isGenerating}
+                  disabled={!prompt.trim() || isGenerating || !replicateKey}
                   className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground px-8"
                 >
                   {isGenerating ? (
@@ -199,6 +372,18 @@ export const AIVideoGenerator = () => {
                 {(isGenerating || generatedVideo) && (
                   <Button variant="outline" onClick={resetGeneration}>
                     Reset
+                  </Button>
+                )}
+                
+                {replicateKey && !showApiKeyInput && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowApiKeyInput(true)}
+                    className="text-xs"
+                  >
+                    <Key className="h-3 w-3 mr-1" />
+                    Reconfigure API
                   </Button>
                 )}
               </div>
@@ -268,14 +453,21 @@ export const AIVideoGenerator = () => {
               </CardHeader>
               <CardContent>
                 <div className="aspect-video rounded-lg overflow-hidden bg-background">
-                  <iframe
+                  <video
                     src={generatedVideo}
-                    title="Generated Video"
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                    controls
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      console.error('Video load error:', e);
+                      toast({
+                        title: "Video Load Error",
+                        description: "Failed to load the generated video.",
+                        variant: "destructive",
+                      });
+                    }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
                 <div className="mt-4 p-4 bg-background/50 rounded-lg">
                   <p className="text-sm text-muted-foreground">
