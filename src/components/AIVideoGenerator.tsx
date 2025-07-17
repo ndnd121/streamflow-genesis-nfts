@@ -29,60 +29,7 @@ interface GenerationStep {
   progress: number;
 }
 
-// Runware API service for video generation
-class RunwareService {
-  private static API_ENDPOINT = "https://api.runware.ai/v1";
-  
-  static async generateVideo(prompt: string, style: string, duration: number, apiKey: string): Promise<string> {
-    try {
-      if (!apiKey) {
-        throw new Error("API key is required. Please get one at https://runware.ai/");
-      }
-      
-      const enhancedPrompt = `${prompt}, ${style} style, high quality, detailed`;
-      
-      const response = await fetch(this.API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify([
-          {
-            taskType: "authentication",
-            apiKey: apiKey
-          },
-          {
-            taskType: "videoGeneration",
-            taskUUID: crypto.randomUUID(),
-            positivePrompt: enhancedPrompt,
-            width: 1024,
-            height: 576,
-            numberOfFrames: Math.min(Math.max(duration * 8, 14), 25),
-            model: "runware:video@1",
-            outputFormat: "MP4"
-          }
-        ])
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      const videoResult = data.data.find((item: any) => item.taskType === "videoGeneration");
-      
-      if (!videoResult || !videoResult.videoURL) {
-        throw new Error("No video URL in the response");
-      }
-      
-      return videoResult.videoURL;
-    } catch (error) {
-      console.error("Video generation error:", error);
-      throw error;
-    }
-  }
-}
+import VideoGenerationService from '@/services/VideoGenerationService';
 
 export const AIVideoGenerator = () => {
   const [prompt, setPrompt] = useState('');
@@ -141,8 +88,11 @@ export const AIVideoGenerator = () => {
         setTimeout(() => updateStepProgress(2, 'processing', 50), 6000);
         setTimeout(() => updateStepProgress(2, 'processing', 80), 9000);
         
-        // Actual API call to Runware
-        const videoURL = await RunwareService.generateVideo(prompt, style, duration, apiKey);
+        // Generate video using browser-based service
+        const videoURL = await VideoGenerationService.generateVideo(
+          { prompt, style, duration },
+          (step, progress) => updateStepProgress(step, 'processing', progress)
+        );
       
       // Step 4: Apply effects
       setTimeout(() => updateStepProgress(2, 'completed', 100), 10000);
@@ -269,21 +219,6 @@ export const AIVideoGenerator = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="apiKey">Runware API Key</Label>
-                <Input
-                  id="apiKey"
-                  type="password"
-                  placeholder="Enter your Runware API key (get one at https://runware.ai/)"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  disabled={isGenerating}
-                  className="bg-background/50"
-                />
-                <p className="text-xs text-muted-foreground">
-                  需要Runware API密钥才能生成视频。请访问 https://runware.ai/ 获取密钥。
-                </p>
-              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
