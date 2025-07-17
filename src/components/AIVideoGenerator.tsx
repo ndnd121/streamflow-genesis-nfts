@@ -35,16 +35,16 @@ export const AIVideoGenerator = () => {
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [activeNodes, setActiveNodes] = useState(12);
   const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([
-    { id: '1', name: '初始化生成', status: 'pending', progress: 0 },
-    { id: '2', name: '处理提示词', status: 'pending', progress: 0 },
-    { id: '3', name: '生成视频帧', status: 'pending', progress: 0 },
-    { id: '4', name: '应用特效', status: 'pending', progress: 0 },
-    { id: '5', name: '完成输出', status: 'pending', progress: 0 }
+    { id: '1', name: 'Initializing', status: 'pending', progress: 0 },
+    { id: '2', name: 'Processing Prompt', status: 'pending', progress: 0 },
+    { id: '3', name: 'Generating Frames', status: 'pending', progress: 0 },
+    { id: '4', name: 'Applying Effects', status: 'pending', progress: 0 },
+    { id: '5', name: 'Finalizing Output', status: 'pending', progress: 0 }
   ]);
 
   const { toast } = useToast();
 
-  // 模拟活动节点变化
+  // Simulate active node changes
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveNodes(prev => {
@@ -59,8 +59,8 @@ export const AIVideoGenerator = () => {
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
-        title: "缺少提示词",
-        description: "请输入视频描述。",
+        title: "Missing Prompt",
+        description: "Please enter a video description.",
         variant: "destructive",
       });
       return;
@@ -70,52 +70,52 @@ export const AIVideoGenerator = () => {
     setGeneratedVideo(null);
     
     try {
-      // 步骤 1: 初始化
+      // Step 1: Initialize
       updateStepProgress(0, 'processing', 20);
       setTimeout(() => updateStepProgress(0, 'completed', 100), 1000);
       
-      // 步骤 2: 处理提示词
+      // Step 2: Process Prompt
       setTimeout(() => updateStepProgress(1, 'processing', 30), 1200);
       setTimeout(() => updateStepProgress(1, 'completed', 100), 3000);
       
-      // 步骤 3: 生成帧
+      // Step 3: Generate Frames
       setTimeout(() => updateStepProgress(2, 'processing', 20), 3200);
       
-      // 使用 VideoGenerationService 生成视频
+      // Use VideoGenerationService to generate video
       const videoURL = await VideoGenerationService.generateVideo(
         { prompt, style, duration },
         (step, progress) => updateStepProgress(step, 'processing', progress)
       );
       
-      // 步骤 4: 应用特效
+      // Step 4: Apply Effects
       setTimeout(() => updateStepProgress(2, 'completed', 100), 10000);
       setTimeout(() => updateStepProgress(3, 'processing', 40), 10200);
       setTimeout(() => updateStepProgress(3, 'processing', 80), 12000);
       setTimeout(() => updateStepProgress(3, 'completed', 100), 13000);
       
-      // 步骤 5: 完成
+      // Step 5: Finalize
       setTimeout(() => updateStepProgress(4, 'processing', 50), 13200);
       setTimeout(() => {
         updateStepProgress(4, 'completed', 100);
         setGeneratedVideo(videoURL);
         
         toast({
-          title: "视频已生成！",
-          description: "您的 AI 视频已成功生成。",
+          title: "Video Generated!",
+          description: "Your AI video has been successfully generated.",
         });
         
         setIsGenerating(false);
       }, 15000);
 
     } catch (error) {
-      console.error('生成错误:', error);
+      console.error('Generation error:', error);
       toast({
-        title: "生成失败",
-        description: error instanceof Error ? error.message : "视频生成过程中发生错误。",
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "An error occurred during video generation.",
         variant: "destructive",
       });
       
-      // 重置步骤
+      // Reset steps
       setGenerationSteps(steps => steps.map(step => ({
         ...step,
         status: 'pending',
@@ -160,26 +160,26 @@ export const AIVideoGenerator = () => {
             <Sparkles className="h-8 w-8 text-primary-foreground" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            AI 视频生成器
+            AI Video Generator
           </h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          使用我们的去中心化 AI 网络，从文本描述生成精美视频
+          Create beautiful videos from text descriptions using our decentralized AI network
         </p>
         
         {/* Network Status */}
         <div className="flex items-center justify-center gap-6 text-sm">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span className="text-muted-foreground">网络活跃</span>
+            <span className="text-muted-foreground">Network Active</span>
           </div>
           <div className="flex items-center gap-2">
             <Network className="h-4 w-4 text-primary" />
-            <span className="text-muted-foreground">{activeNodes} 个节点在线</span>
+            <span className="text-muted-foreground">{activeNodes} Nodes Online</span>
           </div>
           <div className="flex items-center gap-2">
             <Cpu className="h-4 w-4 text-primary" />
-            <span className="text-muted-foreground">GPU 集群就绪</span>
+            <span className="text-muted-foreground">GPU Cluster Ready</span>
           </div>
         </div>
       </div>
@@ -191,18 +191,18 @@ export const AIVideoGenerator = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Video className="h-5 w-5" />
-                视频生成
+                Video Generation
               </CardTitle>
               <CardDescription>
-                描述您想要的视频，让我们的去中心化 AI 网络将其变为现实
+                Describe the video you want, and let our decentralized AI network make it a reality
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="prompt">视频描述</Label>
+                <Label htmlFor="prompt">Video Description</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="描述您想要生成的视频...(例如: '一个未来城市的日落景象，有飞行汽车和霓虹灯')"
+                  placeholder="Describe the video you want to generate... (e.g., 'A futuristic city at sunset with flying cars and neon lights')"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="min-h-[120px] bg-background/50"
@@ -212,7 +212,7 @@ export const AIVideoGenerator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="duration">时长 (秒)</Label>
+                  <Label htmlFor="duration">Duration (seconds)</Label>
                   <Input
                     id="duration"
                     type="number"
@@ -224,7 +224,7 @@ export const AIVideoGenerator = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="style">风格</Label>
+                  <Label htmlFor="style">Style</Label>
                   <select 
                     id="style"
                     value={style}
@@ -232,11 +232,11 @@ export const AIVideoGenerator = () => {
                     disabled={isGenerating}
                     className="w-full px-3 py-2 bg-background border border-border rounded-md text-sm"
                   >
-                    <option value="realistic">写实</option>
-                    <option value="anime">动漫</option>
-                    <option value="cartoon">卡通</option>
-                    <option value="cinematic">电影</option>
-                    <option value="abstract">抽象</option>
+                    <option value="realistic">Realistic</option>
+                    <option value="anime">Anime</option>
+                    <option value="cartoon">Cartoon</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="abstract">Abstract</option>
                   </select>
                 </div>
               </div>
@@ -250,19 +250,19 @@ export const AIVideoGenerator = () => {
                   {isGenerating ? (
                     <>
                       <Zap className="h-4 w-4 mr-2 animate-spin" />
-                      生成中...
+                      Generating...
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-4 w-4 mr-2" />
-                      生成视频
+                      Generate Video
                     </>
                   )}
                 </Button>
                 
                 {(isGenerating || generatedVideo) && (
                   <Button variant="outline" onClick={resetGeneration}>
-                    重置
+                    Reset
                   </Button>
                 )}
               </div>
@@ -275,10 +275,10 @@ export const AIVideoGenerator = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Network className="h-5 w-5 text-primary" />
-                  分布式处理
+                  Distributed Processing
                 </CardTitle>
                 <CardDescription>
-                  您的视频正在我们的分布式节点网络中处理
+                  Your video is being processed across our distributed node network
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -316,16 +316,16 @@ export const AIVideoGenerator = () => {
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <PlayCircle className="h-5 w-5 text-green-500" />
-                    生成的视频
+                    Generated Video
                   </div>
                   <div className="flex items-center gap-2">
                     <Button size="sm" variant="outline">
                       <Download className="h-4 w-4 mr-2" />
-                      下载
+                      Download
                     </Button>
                     <Button size="sm" variant="outline">
                       <Share2 className="h-4 w-4 mr-2" />
-                      分享
+                      Share
                     </Button>
                   </div>
                 </CardTitle>
@@ -337,27 +337,27 @@ export const AIVideoGenerator = () => {
                     controls
                     className="w-full h-full object-contain"
                     onError={(e) => {
-                      console.error('视频加载错误:', e);
+                      console.error('Video loading error:', e);
                       toast({
-                        title: "视频加载错误",
-                        description: "无法加载生成的视频。",
+                        title: "Video Loading Error",
+                        description: "Unable to load the generated video.",
                         variant: "destructive",
                       });
                     }}
                   >
-                    您的浏览器不支持视频标签。
+                    Your browser does not support the video tag.
                   </video>
                 </div>
                 <div className="mt-4 p-4 bg-background/50 rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    <strong>提示词:</strong> {prompt}
+                    <strong>Prompt:</strong> {prompt}
                   </p>
                   <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                    <span>时长: {duration}秒</span>
+                    <span>Duration: {duration}s</span>
                     <span>•</span>
-                    <span>风格: {style}</span>
+                    <span>Style: {style}</span>
                     <span>•</span>
-                    <span>由 {activeNodes} 个节点生成</span>
+                    <span>Generated by {activeNodes} nodes</span>
                   </div>
                 </div>
               </CardContent>
@@ -370,22 +370,22 @@ export const AIVideoGenerator = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Network className="h-5 w-5" />
-              网络状态
+              Network Status
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">活跃节点</span>
+                <span className="text-sm text-muted-foreground">Active Nodes</span>
                 <Badge className="bg-green-100 text-green-800">{activeNodes}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">队列长度</span>
+                <span className="text-sm text-muted-foreground">Queue Length</span>
                 <span className="text-sm font-medium">3</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">平均处理时间</span>
-                <span className="text-sm font-medium">45秒</span>
+                <span className="text-sm text-muted-foreground">Average Processing Time</span>
+                <span className="text-sm font-medium">45s</span>
               </div>
             </div>
           </CardContent>
