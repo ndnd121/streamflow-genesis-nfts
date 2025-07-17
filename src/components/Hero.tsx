@@ -21,20 +21,22 @@ export const Hero = () => {
           {/* Left Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm">
-                The Future of Data Tokenization
+              <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm animate-pulse">
+                🚀 AI Video Generation + Data Tokenization Platform
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                The ultimate{" "}
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  Data tokenomic
+                  AI Video Generation
                 </span>{" "}
-                platform
+                meets{" "}
+                <span className="bg-gradient-accent bg-clip-text text-transparent">
+                  Data Tokenization
+                </span>
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-                Transform streaming video data into NFTs. Generate AI videos through decentralized node training and earn tokens from distributed computing power.
+                Create videos from text using decentralized AI, tokenize your data streams, and earn rewards through our distributed computing network.
               </p>
             </div>
 
