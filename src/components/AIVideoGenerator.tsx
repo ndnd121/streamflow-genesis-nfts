@@ -32,10 +32,14 @@ interface GenerationStep {
 // Runware API service for video generation
 class RunwareService {
   private static API_ENDPOINT = "https://api.runware.ai/v1";
-  private static API_KEY = "runware_api_key_1234567890"; // Platform's Runware API key
+  private static API_KEY = import.meta.env.VITE_RUNWARE_API_KEY || "";
   
   static async generateVideo(prompt: string, style: string, duration: number): Promise<string> {
     try {
+      if (!this.API_KEY) {
+        throw new Error("API key not configured. Please set VITE_RUNWARE_API_KEY environment variable.");
+      }
+      
       const enhancedPrompt = `${prompt}, ${style} style, high quality, detailed`;
       
       const response = await fetch(this.API_ENDPOINT, {
@@ -111,7 +115,7 @@ export const AIVideoGenerator = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleGenerate = async () => {
+const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Missing Prompt",
@@ -124,22 +128,22 @@ export const AIVideoGenerator = () => {
     setIsGenerating(true);
     setGeneratedVideo(null);
     
-    try {
-      // Step 1: Initialize generation
-      updateStepProgress(0, 'processing', 20);
-      
-      // Step 2: Process prompt
-      setTimeout(() => updateStepProgress(0, 'completed', 100), 1000);
-      setTimeout(() => updateStepProgress(1, 'processing', 30), 1200);
-      
-      // Step 3: Generate frames
-      setTimeout(() => updateStepProgress(1, 'completed', 100), 3000);
-      setTimeout(() => updateStepProgress(2, 'processing', 20), 3200);
-      setTimeout(() => updateStepProgress(2, 'processing', 50), 6000);
-      setTimeout(() => updateStepProgress(2, 'processing', 80), 9000);
-      
-      // Actual API call to Runware
-      const videoURL = await RunwareService.generateVideo(prompt, style, duration);
+      try {
+        // Step 1: Initialize generation
+        updateStepProgress(0, 'processing', 20);
+        
+        // Step 2: Process prompt
+        setTimeout(() => updateStepProgress(0, 'completed', 100), 1000);
+        setTimeout(() => updateStepProgress(1, 'processing', 30), 1200);
+        
+        // Step 3: Generate frames
+        setTimeout(() => updateStepProgress(1, 'completed', 100), 3000);
+        setTimeout(() => updateStepProgress(2, 'processing', 20), 3200);
+        setTimeout(() => updateStepProgress(2, 'processing', 50), 6000);
+        setTimeout(() => updateStepProgress(2, 'processing', 80), 9000);
+        
+        // Actual API call to Runware
+        const videoURL = await RunwareService.generateVideo(prompt, style, duration);
       
       // Step 4: Apply effects
       setTimeout(() => updateStepProgress(2, 'completed', 100), 10000);
