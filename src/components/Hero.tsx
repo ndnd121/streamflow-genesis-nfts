@@ -2,19 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Play, Users, Zap, Coins, TrendingUp, Network, Brain } from "lucide-react";
-import cosmicBackground from "@/assets/cosmic-video-wall.jpg";
+import { ThreeBackground } from "./ThreeBackground";
 
 export const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Cosmic Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-        style={{ backgroundImage: `url(${cosmicBackground})` }}
-      />
+      {/* Three.js Interactive Background */}
+      <ThreeBackground />
       
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/20" />
       
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -22,10 +19,10 @@ export const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <Badge className="bg-primary/20 text-primary border-primary/30 backdrop-blur-sm animate-pulse">
-                🚀 AI Video Generation + Data Tokenization Platform
+                AI Video Generation + Data Tokenization Platform
               </Badge>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="bg-gradient-primary bg-clip-text text-transparent">
                   AI Video Generation
                 </span>{" "}
@@ -35,7 +32,7 @@ export const Hero = () => {
                 </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
                 Create videos from text using decentralized AI, tokenize your data streams, and earn rewards through our distributed computing network.
               </p>
             </div>
@@ -44,7 +41,7 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 asChild
-                className="bg-gradient-primary hover:shadow-glow-primary text-white border-0 px-8 py-6 text-lg"
+                className="bg-gradient-primary hover:shadow-glow-primary text-white border-0 px-10 py-8 text-xl"
               >
                 <a href="/dashboard">
                   Join now
@@ -54,18 +51,18 @@ export const Hero = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8">
+            <div className="grid grid-cols-3 gap-8 pt-10">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">10K+</div>
-                <div className="text-sm text-muted-foreground">Active Creators</div>
+                <div className="text-4xl font-bold text-primary">10K+</div>
+                <div className="text-base text-muted-foreground">Active Creators</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">$2M+</div>
-                <div className="text-sm text-muted-foreground">Tokens Earned</div>
+                <div className="text-4xl font-bold text-primary">$2M+</div>
+                <div className="text-base text-muted-foreground">Tokens Earned</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">50K+</div>
-                <div className="text-sm text-muted-foreground">Video NFTs</div>
+                <div className="text-4xl font-bold text-primary">50K+</div>
+                <div className="text-base text-muted-foreground">Video NFTs</div>
               </div>
             </div>
           </div>
