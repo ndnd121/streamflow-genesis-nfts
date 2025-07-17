@@ -8,12 +8,17 @@ function AnimatedPoints() {
   const mouse = useRef({ x: 0, y: 0 });
 
   // Generate random points in 3D space
-  const particlesPosition = new Float32Array(3000);
-  for (let i = 0; i < 3000; i++) {
+  const particleCount = 1000;
+  const particlesPosition = new Float32Array(particleCount * 3); // 3 coordinates per particle
+  
+  for (let i = 0; i < particleCount; i++) {
     const x = (Math.random() - 0.5) * 10;
     const y = (Math.random() - 0.5) * 10;
     const z = (Math.random() - 0.5) * 10;
-    particlesPosition.set([x, y, z], i * 3);
+    
+    particlesPosition[i * 3] = x;     // x coordinate
+    particlesPosition[i * 3 + 1] = y; // y coordinate  
+    particlesPosition[i * 3 + 2] = z; // z coordinate
   }
 
   useFrame((state) => {
