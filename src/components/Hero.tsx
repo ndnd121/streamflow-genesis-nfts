@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Play, Users, Zap, Coins, TrendingUp } from "lucide-react";
+import { ArrowRight, Play, Users, Zap, Coins, TrendingUp, Network, Brain } from "lucide-react";
 import cosmicBackground from "@/assets/cosmic-video-wall.jpg";
 
 export const Hero = () => {
@@ -34,7 +34,7 @@ export const Hero = () => {
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-                Transform streaming video data into NFTs. Earn tokens through AI-driven recommendations and decentralized node computing.
+                Transform streaming video data into NFTs. Generate AI videos through decentralized node training and earn tokens from distributed computing power.
               </p>
             </div>
 
@@ -87,12 +87,12 @@ export const Hero = () => {
             <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-glow-cosmic transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-lg bg-primary/20">
-                  <Zap className="h-6 w-6 text-primary" />
+                  <Brain className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">AI Recommendations</h3>
+                  <h3 className="text-xl font-semibold mb-2">AI Distributed Video Training</h3>
                   <p className="text-muted-foreground">
-                    Our intelligent system matches your content with the right audience for maximum earnings.
+                    Generate stunning videos from text using our decentralized AI training network powered by community nodes.
                   </p>
                 </div>
               </div>
@@ -101,12 +101,12 @@ export const Hero = () => {
             <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-glow-cosmic transition-all duration-300">
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-lg bg-primary/20">
-                  <Coins className="h-6 w-6 text-primary" />
+                  <Network className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Decentralized Rewards</h3>
+                  <h3 className="text-xl font-semibold mb-2">Decentralized Node Network</h3>
                   <p className="text-muted-foreground">
-                    Earn tokens through our distributed node network that powers the platform.
+                    Contribute computing power to train AI models and earn tokens through our distributed reward system.
                   </p>
                 </div>
               </div>
