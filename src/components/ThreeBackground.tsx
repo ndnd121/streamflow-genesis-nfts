@@ -92,13 +92,17 @@ function FloatingOrbs() {
 
 export const ThreeBackground = () => {
   return (
-    <div className="absolute inset-0 -z-10">
+    <div className="fixed inset-0 z-0">
       <Canvas
         camera={{ position: [0, 0, 5], fov: 60 }}
-        style={{ background: 'transparent' }}
+        style={{ 
+          background: 'transparent',
+          width: '100%',
+          height: '100vh'
+        }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
+        <ambientLight intensity={0.8} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} />
         <AnimatedPoints />
         <FloatingOrbs />
       </Canvas>
