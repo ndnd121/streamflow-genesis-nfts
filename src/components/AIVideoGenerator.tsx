@@ -396,7 +396,7 @@ export const AIVideoGenerator = () => {
       </div>
       
       {/* Coming Soon Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-sm rounded-lg">
+      <div className="absolute inset-0 flex items-center justify-center bg-background/10 backdrop-blur-sm rounded-lg">
         <div className="text-center space-y-6 p-8">
           {/* Icon */}
           <div className="flex justify-center">
