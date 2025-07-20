@@ -341,33 +341,55 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
             </CardContent>
           </Card>
 
-          {/* AI Generation Panel */}
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+          {/* AI Generation Panel - Coming Soon */}
+          <Card className="relative border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
+            {/* Blur overlay */}
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] z-10 flex items-center justify-center">
+              <div className="text-center space-y-4">
+                <div className="p-4 rounded-full bg-gradient-primary mx-auto w-fit">
+                  <Sparkles className="h-8 w-8 text-primary-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                    Coming Soon
+                  </h3>
+                  <p className="text-muted-foreground max-w-sm">
+                    AI Video Generation feature is currently in development
+                  </p>
+                </div>
+                <Badge variant="secondary" className="px-4 py-2">
+                  <Zap className="h-3 w-3 mr-1" />
+                  Beta Testing
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Blurred content behind */}
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Video className="h-5 w-5" />
-                AI 视频生成
+                AI Video Generation
               </CardTitle>
               <CardDescription>
-                描述您想要的视频，让去中心化AI网络为您创造
+                Create videos from text descriptions using our decentralized AI network
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="prompt">视频描述</Label>
+                <Label htmlFor="prompt">Video Description</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="描述您想生成的视频... (例如: '夕阳下的未来城市，有飞行汽车和霓虹灯')"
+                  placeholder="Describe your video... (e.g. 'A futuristic city at sunset with flying cars and neon lights')"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="min-h-[120px] bg-background/50"
-                  disabled={isGenerating}
+                  disabled={true}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="duration">时长 (秒)</Label>
+                  <Label htmlFor="duration">Duration (seconds)</Label>
                   <Input
                     id="duration"
                     type="number"
@@ -375,31 +397,34 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                     max="60"
                     value={duration}
                     onChange={(e) => setDuration(Number(e.target.value))}
-                    disabled={isGenerating}
+                    disabled={true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="style">风格</Label>
+                  <Label htmlFor="style">Style</Label>
                   <select 
                     id="style"
                     value={style}
                     onChange={(e) => setStyle(e.target.value)}
-                    disabled={isGenerating}
+                    disabled={true}
                     className="w-full px-3 py-2 bg-background border border-border rounded-md text-sm"
                   >
-                    <option value="realistic">写实</option>
-                    <option value="anime">动漫</option>
-                    <option value="cartoon">卡通</option>
-                    <option value="cinematic">电影</option>
-                    <option value="abstract">抽象</option>
+                    <option value="realistic">Realistic</option>
+                    <option value="anime">Anime</option>
+                    <option value="cartoon">Cartoon</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="abstract">Abstract</option>
                   </select>
                 </div>
               </div>
 
-              <div className="text-center p-4 bg-muted/50 rounded-lg">
-                <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">AI 视频生成功能即将推出</p>
-              </div>
+              <Button
+                disabled={true}
+                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate AI Video
+              </Button>
             </CardContent>
           </Card>
         </div>
