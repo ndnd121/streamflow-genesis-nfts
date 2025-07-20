@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNodePurchase } from '@/hooks/useNodePurchase';
-import { Wallet, Coins, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Wallet, Coins, ShoppingCart, CheckCircle, Zap, Shield, TrendingUp, Minus, Plus } from 'lucide-react';
 
 export const NodePurchaseSection: React.FC = () => {
   const { connected, publicKey } = useWallet();
@@ -15,9 +15,11 @@ export const NodePurchaseSection: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [balance, setBalance] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   const availableNodes = getAvailableNodes();
   const totalCost = quantity * config.nodePriceSOL;
+  const nodesOnline = config.totalNodes - availableNodes;
 
   // Get wallet balance
   useEffect(() => {
@@ -27,7 +29,7 @@ export const NodePurchaseSection: React.FC = () => {
   }, [connected, publicKey, checkBalance]);
 
   const handlePurchase = async () => {
-    if (!agreedToTerms) {
+    if (!agreedToTerms || !agreedToPrivacy) {
       return;
     }
 
@@ -38,11 +40,13 @@ export const NodePurchaseSection: React.FC = () => {
       setBalance(newBalance);
       setQuantity(1);
       setAgreedToTerms(false);
+      setAgreedToPrivacy(false);
     }
   };
 
   const canPurchase = connected && 
                      agreedToTerms && 
+                     agreedToPrivacy &&
                      quantity > 0 && 
                      quantity <= availableNodes && 
                      balance >= totalCost &&
@@ -51,7 +55,7 @@ export const NodePurchaseSection: React.FC = () => {
   // Show loading state
   if (configLoading) {
     return (
-      <div className="max-w-2xl mx-auto p-6 flex items-center justify-center min-h-[400px]">
+      <div className="max-w-6xl mx-auto p-6 flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
           <p className="text-muted-foreground">Loading configuration...</p>
@@ -61,230 +65,242 @@ export const NodePurchaseSection: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      {/* Header Information */}
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          Node Purchase Platform
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+          Purchase Compute Nodes
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Purchase network nodes and participate in the decentralized ecosystem
+        <p className="text-muted-foreground text-xl max-w-3xl mx-auto">
+          Become part of the decentralized AI network and earn token rewards and governance benefits
         </p>
       </div>
 
-      {/* Node Information Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Coins className="h-5 w-5" />
-            Node Information
-          </CardTitle>
-          <CardDescription>
-            Current node sales status and pricing information
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-primary">{config.nodePriceSOL} SOL</div>
-              <div className="text-sm text-muted-foreground">Unit Price</div>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <div className="text-2xl font-bold text-primary">{availableNodes}</div>
-              <div className="text-sm text-muted-foreground">Available Nodes</div>
-            </div>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div 
-              className="bg-primary h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${(config.nodesSold / config.totalNodes) * 100}%` }}
-            />
-          </div>
-          <div className="text-center text-sm text-muted-foreground">
-            Sold {config.nodesSold} / {config.totalNodes} nodes
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Configuration Reminder */}
-      {!configLoading && config.recipientWallet === 'YOUR_SOLANA_WALLET_ADDRESS_HERE' && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <div className="rounded-full bg-amber-100 p-2">
-                <Coins className="h-4 w-4 text-amber-600" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Side - Node Information */}
+        <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+          <CardHeader className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <Coins className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-white">BitTok Compute Node</CardTitle>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-amber-800">
-                  Recipient wallet address needs configuration
-                </p>
-                <p className="text-xs text-amber-700">
-                  Please replace 'YOUR_SOLANA_WALLET_ADDRESS_HERE' with your actual Solana wallet address in useNodePurchase.ts
-                </p>
-              </div>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                Limited Offer
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Wallet Connection */}
-      {!connected ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wallet className="h-5 w-5" />
-              Connect Wallet
-            </CardTitle>
-            <CardDescription>
-              Please connect your Solana wallet to continue purchasing
+            <CardDescription className="text-slate-300">
+              Contribute computing power to the AI video generation network and earn stable returns
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex justify-center">
-              <WalletMultiButton className="!bg-primary hover:!bg-primary/90" />
+          
+          <CardContent className="space-y-6">
+            {/* Stats */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Nodes Online</span>
+                <span className="text-2xl font-bold text-green-400">{nodesOnline.toLocaleString()}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Remaining Nodes</span>
+                <span className="text-2xl font-bold text-yellow-400">{availableNodes.toLocaleString()}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Current Price</span>
+                <span className="text-2xl font-bold text-green-400">{config.nodePriceSOL} SOL</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Expected APY</span>
+                <span className="text-2xl font-bold text-green-400">15-25%</span>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-1 gap-4 pt-4 border-t border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">High Performance</div>
+                  <div className="text-slate-400 text-sm">GPU Power</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-green-400" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">Secure & Stable</div>
+                  <div className="text-slate-400 text-sm">99.9% Uptime</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <div className="text-white font-medium">Passive Income</div>
+                  <div className="text-slate-400 text-sm">Daily Rewards</div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
-      ) : (
-        <>
-          {/* Wallet Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500" />
-                Wallet Connected
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Wallet Address:</span>
-                <Badge variant="outline" className="font-mono text-xs">
-                  {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
-                </Badge>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Balance:</span>
-                <span className="font-semibold">{balance.toFixed(4)} SOL</span>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Purchase Interface */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5" />
-                Purchase Nodes
-              </CardTitle>
-              <CardDescription>
-                Select quantity and complete payment
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Quantity Selection */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Purchase Quantity</label>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </Button>
-                  <span className="flex-1 text-center font-medium text-lg">
-                    {quantity}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setQuantity(Math.min(availableNodes, quantity + 1))}
-                    disabled={quantity >= availableNodes}
-                  >
-                    +
-                  </Button>
-                </div>
-                <div className="text-xs text-muted-foreground text-center">
-                  Maximum {availableNodes} nodes available for purchase
+        {/* Right Side - Purchase Interface */}
+        <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-2xl text-white">Purchase Nodes</CardTitle>
+            <CardDescription className="text-slate-300">
+              {!connected ? "Please connect wallet to continue purchase" : "Select quantity and complete your purchase"}
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {!connected ? (
+              <div className="space-y-4">
+                <div className="text-center py-8">
+                  <Wallet className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-400 mb-4">Connect your wallet to get started</p>
+                  <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg" />
                 </div>
               </div>
-
-              {/* Cost Calculation */}
-              <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
-                <div className="flex justify-between">
-                  <span>Unit Price:</span>
-                  <span>{config.nodePriceSOL} SOL</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Quantity:</span>
-                  <span>{quantity}</span>
-                </div>
-                <div className="border-t pt-2">
-                  <div className="flex justify-between font-semibold text-lg">
-                    <span>Total:</span>
-                    <span className="text-primary">{totalCost.toFixed(4)} SOL</span>
+            ) : (
+              <div className="space-y-6">
+                {/* Wallet Info */}
+                <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span className="text-green-400 font-medium">Wallet Connected</span>
+                  </div>
+                  <div className="text-sm text-slate-400">
+                    {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
+                  </div>
+                  <div className="text-sm text-slate-400">
+                    Balance: {balance.toFixed(4)} SOL
                   </div>
                 </div>
-              </div>
 
-              {/* Balance Check */}
-              {balance < totalCost && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-sm text-destructive">
-                    Insufficient balance! Need {totalCost.toFixed(4)} SOL, current balance {balance.toFixed(4)} SOL
-                  </p>
+                {/* Purchase Quantity */}
+                <div className="space-y-3">
+                  <label className="text-white font-medium">Purchase Quantity</label>
+                  <div className="flex items-center justify-center gap-4">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      disabled={quantity <= 1}
+                      className="w-12 h-12 rounded-lg border-slate-600 text-white hover:bg-slate-700"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <div className="w-24 h-12 bg-slate-800 border border-slate-600 rounded-lg flex items-center justify-center">
+                      <span className="text-2xl font-bold text-white">{quantity}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setQuantity(Math.min(availableNodes, quantity + 1))}
+                      disabled={quantity >= availableNodes}
+                      className="w-12 h-12 rounded-lg border-slate-600 text-white hover:bg-slate-700"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-              )}
 
-              {/* Terms of Service */}
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreedToTerms}
-                  onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                />
-                <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
-                  I have read and agree to the Terms of Service and Privacy Policy. I understand this is a decentralized transaction and cannot be reversed once confirmed.
-                </label>
-              </div>
+                {/* Price Summary */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-slate-300">
+                    <span>Unit Price:</span>
+                    <span>{config.nodePriceSOL} SOL</span>
+                  </div>
+                  <div className="flex justify-between text-slate-300">
+                    <span>Quantity:</span>
+                    <span>{quantity}</span>
+                  </div>
+                  <div className="flex justify-between text-xl font-bold text-white border-t border-slate-700 pt-3">
+                    <span>Total:</span>
+                    <span className="text-green-400">{totalCost.toFixed(4)} SOL</span>
+                  </div>
+                </div>
 
-              {/* Purchase Button */}
-              <Button
-                onClick={handlePurchase}
-                disabled={!canPurchase}
-                className="w-full"
-                size="lg"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                    Processing...
-                  </>
-                ) : (
-                  `Purchase ${quantity} nodes (${totalCost.toFixed(4)} SOL)`
+                {/* Balance Check */}
+                {balance < totalCost && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <p className="text-sm text-red-400">
+                      Insufficient balance! Need {totalCost.toFixed(4)} SOL, current balance {balance.toFixed(4)} SOL
+                    </p>
+                  </div>
                 )}
-              </Button>
 
-              {!agreedToTerms && (
-                <p className="text-xs text-muted-foreground text-center">
-                  Please agree to the Terms of Service first
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </>
-      )}
+                {/* Agreements */}
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id="terms"
+                      checked={agreedToTerms}
+                      onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                      className="mt-1"
+                    />
+                    <label htmlFor="terms" className="text-sm text-slate-300 leading-relaxed">
+                      I have read and agree to the{' '}
+                      <span className="text-green-400 cursor-pointer hover:underline">Terms of Service</span>
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id="privacy"
+                      checked={agreedToPrivacy}
+                      onCheckedChange={(checked) => setAgreedToPrivacy(checked as boolean)}
+                      className="mt-1"
+                    />
+                    <label htmlFor="privacy" className="text-sm text-slate-300 leading-relaxed">
+                      I have read and agree to the{' '}
+                      <span className="text-green-400 cursor-pointer hover:underline">Privacy Policy</span>
+                    </label>
+                  </div>
+                </div>
 
-      {/* Disclaimer */}
-      <Card className="border-muted">
-        <CardContent className="pt-6">
-          <p className="text-xs text-muted-foreground text-center">
-            ⚠️ Risk Notice: Cryptocurrency trading involves risks. Please ensure you fully understand the risks before investing.
-            This platform is not responsible for any losses.
-          </p>
-        </CardContent>
-      </Card>
+                {/* Purchase Button */}
+                <Button
+                  onClick={handlePurchase}
+                  disabled={!canPurchase}
+                  className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 disabled:text-slate-400"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      Processing...
+                    </>
+                  ) : !connected ? (
+                    "Please Connect Wallet"
+                  ) : (
+                    `Purchase ${quantity} Node${quantity > 1 ? 's' : ''} - ${totalCost.toFixed(4)} SOL`
+                  )}
+                </Button>
+
+                {(!agreedToTerms || !agreedToPrivacy) && connected && (
+                  <p className="text-xs text-slate-400 text-center">
+                    Please agree to Terms of Service and Privacy Policy
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -46,10 +46,10 @@ export const useNodePurchase = () => {
       if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, using default configuration');
         setConfig({
-          recipientWallet: 'YOUR_SOLANA_WALLET_ADDRESS_HERE', // Replace with actual address
-          nodePriceSOL: 0.1,
-          totalNodes: 1000,
-          nodesSold: 0,
+          recipientWallet: 'BittokNodeRecipient12345678901234567890', // Replace with real project wallet
+          nodePriceSOL: 0.85,
+          totalNodes: 1280,
+          nodesSold: 1024,
         });
         setConfigLoading(false);
         return;
@@ -76,9 +76,9 @@ export const useNodePurchase = () => {
 
       setConfig({
         recipientWallet: configMap.recipient_wallet || '',
-        nodePriceSOL: parseFloat(configMap.node_price) || 0.1,
-        totalNodes: parseInt(configMap.total_nodes) || 1000,
-        nodesSold: parseInt(configMap.nodes_sold) || 0,
+        nodePriceSOL: parseFloat(configMap.node_price) || 0.85,
+        totalNodes: parseInt(configMap.total_nodes) || 1280,
+        nodesSold: parseInt(configMap.nodes_sold) || 1024,
       });
 
     } catch (error) {
