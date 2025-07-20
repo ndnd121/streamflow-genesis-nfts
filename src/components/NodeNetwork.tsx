@@ -2,7 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Server, Cpu, HardDrive, Zap, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import { Server, Cpu, HardDrive, Zap, CheckCircle, AlertCircle, Clock, ShoppingCart } from "lucide-react";
+import { NodePurchaseSection } from "@/components/NodePurchaseSection";
 
 interface Node {
   id: string;
@@ -123,8 +124,8 @@ export const NodeNetwork = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-foreground">My Nodes</h3>
             <Button className="bg-gradient-primary">
-              <Server className="h-4 w-4 mr-2" />
-              Deploy Node
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Purchase Node
             </Button>
           </div>
           
@@ -235,6 +236,19 @@ export const NodeNetwork = () => {
           </div>
         </Card>
       </div>
+
+      {/* 节点购买区域 */}
+      <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
+        <div className="text-center mb-4">
+          <h3 className="text-2xl font-semibold bg-gradient-secondary bg-clip-text text-transparent">
+            Purchase Computing Nodes
+          </h3>
+          <p className="text-muted-foreground mt-2">
+            Join the decentralized network and earn rewards
+          </p>
+        </div>
+        <NodePurchaseSection />
+      </Card>
     </div>
   );
 };
