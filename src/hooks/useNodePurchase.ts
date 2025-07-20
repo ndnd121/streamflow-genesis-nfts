@@ -46,7 +46,7 @@ export const useNodePurchase = () => {
       if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, using default configuration');
         setConfig({
-          recipientWallet: 'BittokNodeRecipient12345678901234567890', // Replace with real project wallet
+          recipientWallet: 'Gp2DQ3rjiuzZBqW3v7EHq3wQBwQwPTTJnT6j8UWoX7WK', // Real project wallet address
           nodePriceSOL: 0.85,
           totalNodes: 1280,
           nodesSold: 1024,

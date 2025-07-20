@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNodePurchase } from '@/hooks/useNodePurchase';
-import { Wallet, Coins, ShoppingCart, CheckCircle, Zap, Shield, TrendingUp, Minus, Plus } from 'lucide-react';
+import { Wallet, Coins, ShoppingCart, CheckCircle, Zap, Shield, TrendingUp, Minus, Plus, Link } from 'lucide-react';
 
 export const NodePurchaseSection: React.FC = () => {
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, connect, wallet, disconnect } = useWallet();
   const { config, isLoading, configLoading, purchaseNodes, checkBalance, getAvailableNodes } = useNodePurchase();
   
   const [quantity, setQuantity] = useState(1);
@@ -172,22 +172,44 @@ export const NodePurchaseSection: React.FC = () => {
                 <div className="text-center py-8">
                   <Wallet className="w-16 h-16 text-slate-400 mx-auto mb-4" />
                   <p className="text-slate-400 mb-4">Connect your wallet to get started</p>
-                  <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg" />
+                  <div className="space-y-3">
+                    <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg" />
+                    <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
+                      <Link className="w-4 h-4" />
+                      <span>Link your SOL wallet to purchase nodes</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Wallet Info */}
+                {/* Wallet Info with Connect/Disconnect */}
                 <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span className="text-green-400 font-medium">Wallet Connected</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      <span className="text-green-400 font-medium">Wallet Connected</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={disconnect}
+                        className="text-xs border-slate-600 text-slate-300 hover:bg-slate-700"
+                      >
+                        Disconnect
+                      </Button>
+                      <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg !text-xs !px-3 !py-1" />
+                    </div>
                   </div>
-                  <div className="text-sm text-slate-400">
-                    {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
-                  </div>
-                  <div className="text-sm text-slate-400">
-                    Balance: {balance.toFixed(4)} SOL
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <Link className="w-3 h-3" />
+                      <span>Address: {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}</span>
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      Balance: {balance.toFixed(4)} SOL
+                    </div>
                   </div>
                 </div>
 
