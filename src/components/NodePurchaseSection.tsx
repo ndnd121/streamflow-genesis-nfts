@@ -160,8 +160,8 @@ export const NodePurchaseSection: React.FC = () => {
         {/* Right Side - Purchase Interface */}
         <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Purchase Nodes</CardTitle>
-            <CardDescription className="text-slate-300 text-sm">
+            <CardTitle className="text-base text-white">Purchase Nodes</CardTitle>
+            <CardDescription className="text-slate-300 text-xs">
               {!connected ? "Please connect wallet to continue purchase" : "Select quantity and complete your purchase"}
             </CardDescription>
           </CardHeader>
