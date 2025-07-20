@@ -164,13 +164,13 @@ const Index = () => {
               {user ? (
                 <Link to="/dashboard">
                   <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
-                    进入工作台
+                    Enter Dashboard
                   </Button>
                 </Link>
               ) : (
                 <Link to="/auth">
                   <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
-                    登录/注册
+                    Sign In / Register
                   </Button>
                 </Link>
               )}

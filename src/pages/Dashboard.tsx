@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { VideoNFT } from '@/components/VideoNFT';
 import { AIVideoGenerator } from '@/components/AIVideoGenerator';
-import { Plus, Video, LogOut, User } from 'lucide-react';
+import { Plus, Video, LogOut, User, Home, ArrowLeft, ShoppingCart } from 'lucide-react';
 
 interface Video {
   id: string;
@@ -50,8 +50,8 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching videos:', error);
       toast({
-        title: "加载失败",
-        description: "无法加载您的视频，请刷新页面重试。",
+        title: "Loading Failed",
+        description: "Unable to load your videos, please refresh and try again.",
         variant: "destructive"
       });
     } finally {
@@ -65,8 +65,8 @@ const Dashboard = () => {
       navigate('/');
     } catch (error) {
       toast({
-        title: "登出失败",
-        description: "登出时发生错误，请重试。",
+        title: "Sign Out Failed",
+        description: "An error occurred during sign out, please try again.",
         variant: "destructive"
       });
     }
@@ -76,8 +76,8 @@ const Dashboard = () => {
     setShowVideoGenerator(false);
     fetchUserVideos();
     toast({
-      title: "视频已保存",
-      description: "您的视频已成功保存到个人库中。"
+      title: "Video Saved",
+      description: "Your video has been successfully saved to your library."
     });
   };
 
@@ -91,30 +91,55 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <BittokLogo className="h-8 w-auto" />
-            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              我的工作台
-            </h1>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" />
-              <span>{user.email}</span>
+      {/* Navigation Header */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/30">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Home
+                </Button>
+              </Link>
+              <div className="flex items-center gap-3">
+                <BittokLogo size={28} className="drop-shadow-lg" />
+                <span className="text-xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
+                  BITTOK Dashboard
+                </span>
+              </div>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleSignOut}
-              className="flex items-center space-x-2"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>登出</span>
-            </Button>
+            
+            <nav className="hidden md:flex items-center gap-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Home className="h-4 w-4" />
+                  Home
+                </Button>
+              </Link>
+              <Link to="/node-purchase">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ShoppingCart className="h-4 w-4" />
+                  Node Purchase
+                </Button>
+              </Link>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+                <User className="h-4 w-4" />
+                <span>{user.email}</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleSignOut}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -127,7 +152,7 @@ const Dashboard = () => {
             className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
           >
             <Plus className="h-4 w-4" />
-            <span>创建新视频</span>
+            <span>Create New Video</span>
           </Button>
           
           <Button 
@@ -135,7 +160,7 @@ const Dashboard = () => {
             onClick={() => navigate('/node-purchase')}
             className="flex items-center space-x-2"
           >
-            <span>购买节点</span>
+            <span>Purchase Nodes</span>
           </Button>
         </div>
 
@@ -145,7 +170,7 @@ const Dashboard = () => {
             <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">创建 AI 视频</h2>
+                  <h2 className="text-2xl font-bold">Create AI Video</h2>
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -164,7 +189,7 @@ const Dashboard = () => {
         <div className="space-y-6">
           <div className="flex items-center space-x-2">
             <Video className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">我的视频库</h2>
+            <h2 className="text-lg font-semibold">My Video Library</h2>
             <span className="text-sm text-muted-foreground">({videos.length})</span>
           </div>
 
@@ -191,7 +216,7 @@ const Dashboard = () => {
                   title={video.title}
                   videoUrl={video.video_url}
                   thumbnail="/placeholder.svg"
-                  creator="您"
+                  creator="You"
                   price={0}
                   likes={0}
                   shares={0}
@@ -205,15 +230,15 @@ const Dashboard = () => {
             <Card className="text-center py-12">
               <CardContent>
                 <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <CardTitle className="mb-2">还没有视频</CardTitle>
+                <CardTitle className="mb-2">No videos yet</CardTitle>
                 <CardDescription className="mb-4">
-                  创建您的第一个 AI 视频开始您的创作之旅
+                  Create your first AI video to start your creative journey
                 </CardDescription>
                 <Button 
                   onClick={() => setShowVideoGenerator(true)}
                   className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                 >
-                  创建第一个视频
+                  Create First Video
                 </Button>
               </CardContent>
             </Card>
