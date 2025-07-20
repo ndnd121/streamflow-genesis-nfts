@@ -7,7 +7,7 @@ import {
   LAMPORTS_PER_SOL 
 } from '@solana/web3.js';
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 
 interface NodePurchaseConfig {
   recipientWallet: string;
@@ -41,6 +41,19 @@ export const useNodePurchase = () => {
   const loadConfig = useCallback(async () => {
     try {
       setConfigLoading(true);
+      
+      // 如果 Supabase 未配置，使用默认配置
+      if (!isSupabaseConfigured()) {
+        console.log('Supabase 未配置，使用默认配置');
+        setConfig({
+          recipientWallet: 'YOUR_SOLANA_WALLET_ADDRESS_HERE', // 需要替换为实际地址
+          nodePriceSOL: 0.1,
+          totalNodes: 1000,
+          nodesSold: 0,
+        });
+        setConfigLoading(false);
+        return;
+      }
       
       const { data: configData, error } = await supabase
         .from('project_config')
@@ -82,6 +95,12 @@ export const useNodePurchase = () => {
 
   // 更新已售节点数
   const updateNodesSold = useCallback(async (quantity: number) => {
+    if (!isSupabaseConfigured()) {
+      // 如果 Supabase 未配置，只更新本地状态
+      setConfig(prev => ({ ...prev, nodesSold: prev.nodesSold + quantity }));
+      return;
+    }
+
     try {
       const newNodesSold = config.nodesSold + quantity;
       
@@ -106,7 +125,7 @@ export const useNodePurchase = () => {
     totalPrice: number, 
     transactionHash: string
   ) => {
-    if (!publicKey) return;
+    if (!publicKey || !isSupabaseConfigured()) return;
 
     try {
       const { error } = await supabase

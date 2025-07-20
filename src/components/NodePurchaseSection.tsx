@@ -106,6 +106,27 @@ export const NodePurchaseSection: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* 配置提醒 */}
+      {!configLoading && config.recipientWallet === 'YOUR_SOLANA_WALLET_ADDRESS_HERE' && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-amber-100 p-2">
+                <Coins className="h-4 w-4 text-amber-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-amber-800">
+                  需要配置收款钱包地址
+                </p>
+                <p className="text-xs text-amber-700">
+                  请在 useNodePurchase.ts 中将 'YOUR_SOLANA_WALLET_ADDRESS_HERE' 替换为您的实际 Solana 钱包地址
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* 钱包连接 */}
       {!connected ? (
         <Card>
