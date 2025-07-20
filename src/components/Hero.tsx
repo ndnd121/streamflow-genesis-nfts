@@ -43,7 +43,7 @@ export const Hero = () => {
                 asChild
                 className="bg-gradient-primary hover:shadow-glow-primary text-white border-0 px-10 py-8 text-xl"
               >
-                <a href="/dashboard">
+                <a href="/register">
                   Join now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>

@@ -129,63 +129,8 @@ const Index = () => {
               </span>
             </div>
 
-            <nav className="hidden md:flex items-center gap-8">
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('marketplace')}
-                className={activeTab === 'marketplace' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
-              >
-                Home
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('aivideo')}
-                className={activeTab === 'aivideo' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
-              >
-                AI Video
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('economy')}
-                className={activeTab === 'economy' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
-              >
-                Token Economy
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('nodes')}
-                className={activeTab === 'nodes' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
-              >
-                Node Network
-              </Button>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              {user ? (
-                <Link to="/dashboard">
-                  <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
-                    Enter Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Link to="/register">
-                    <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
-                      Join Now
-                    </Button>
-                  </Link>
-                  <Link to="/auth">
-                    <Button variant="outline">
-                      Sign In
-                    </Button>
-                  </Link>
-                </div>
-              )}
-              <WalletMultiButton className="!bg-gradient-primary !hover:shadow-glow-primary !text-primary-foreground !border-0 !px-6 !transition-all !duration-300 !rounded-lg" />
-              <Button size="icon" variant="ghost" className="md:hidden">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Empty nav for clean header */}
+            <div></div>
           </div>
         </div>
       </header>
