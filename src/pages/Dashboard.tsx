@@ -81,7 +81,20 @@ const Dashboard = () => {
     });
   };
 
-  // Remove the loading spinner - go directly to dashboard
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Please Sign In</h2>
+          <p className="text-muted-foreground mb-6">You need to be signed in to access the dashboard.</p>
+          <Button onClick={() => navigate('/auth')} className="bg-gradient-primary">
+            Go to Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Navigation Header */}
@@ -121,7 +134,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4" />
-                <span>{user.email}</span>
+                <span>{user?.email || 'User'}</span>
               </div>
               <Button 
                 variant="outline" 
