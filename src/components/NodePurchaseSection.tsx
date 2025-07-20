@@ -4,7 +4,6 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useNodePurchase } from '@/hooks/useNodePurchase';
 import { Wallet, Coins, ShoppingCart, CheckCircle, Zap, Shield, TrendingUp, Minus, Plus, Link } from 'lucide-react';
 
@@ -14,8 +13,6 @@ export const NodePurchaseSection: React.FC = () => {
   
   const [quantity, setQuantity] = useState(1);
   const [balance, setBalance] = useState(0);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
   const availableNodes = getAvailableNodes();
   const totalCost = quantity * config.nodePriceSOL;
@@ -29,24 +26,16 @@ export const NodePurchaseSection: React.FC = () => {
   }, [connected, publicKey, checkBalance]);
 
   const handlePurchase = async () => {
-    if (!agreedToTerms || !agreedToPrivacy) {
-      return;
-    }
-
     const result = await purchaseNodes(quantity);
     if (result.success) {
       // Refresh balance after successful purchase
       const newBalance = await checkBalance();
       setBalance(newBalance);
       setQuantity(1);
-      setAgreedToTerms(false);
-      setAgreedToPrivacy(false);
     }
   };
 
   const canPurchase = connected && 
-                     agreedToTerms && 
-                     agreedToPrivacy &&
                      quantity > 0 && 
                      quantity <= availableNodes && 
                      balance >= totalCost &&
@@ -230,35 +219,6 @@ export const NodePurchaseSection: React.FC = () => {
                   </div>
                 )}
 
-                {/* Agreements */}
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="terms"
-                      checked={agreedToTerms}
-                      onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                      className="mt-1"
-                    />
-                    <label htmlFor="terms" className="text-sm text-slate-300 leading-relaxed">
-                      I have read and agree to the{' '}
-                      <span className="text-green-400 cursor-pointer hover:underline">Terms of Service</span>
-                    </label>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="privacy"
-                      checked={agreedToPrivacy}
-                      onCheckedChange={(checked) => setAgreedToPrivacy(checked as boolean)}
-                      className="mt-1"
-                    />
-                    <label htmlFor="privacy" className="text-sm text-slate-300 leading-relaxed">
-                      I have read and agree to the{' '}
-                      <span className="text-green-400 cursor-pointer hover:underline">Privacy Policy</span>
-                    </label>
-                  </div>
-                </div>
-
                 {/* Purchase Button */}
                 <Button
                   onClick={handlePurchase}
@@ -276,12 +236,6 @@ export const NodePurchaseSection: React.FC = () => {
                     `Purchase ${quantity} Node${quantity > 1 ? 's' : ''} - ${totalCost.toFixed(2)} SOL`
                   )}
                 </Button>
-
-                {(!agreedToTerms || !agreedToPrivacy) && connected && (
-                  <p className="text-xs text-slate-400 text-center">
-                    Please agree to Terms of Service and Privacy Policy
-                  </p>
-                )}
               </div>
             )}
           </CardContent>
