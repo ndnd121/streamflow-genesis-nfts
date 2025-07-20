@@ -135,7 +135,7 @@ const Index = () => {
                 onClick={() => setActiveTab('marketplace')}
                 className={activeTab === 'marketplace' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground'}
               >
-                BitTolk Ads
+                Home
               </Button>
               <Button
                 variant="ghost"
