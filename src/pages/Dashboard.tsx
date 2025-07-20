@@ -81,14 +81,7 @@ const Dashboard = () => {
     });
   };
 
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
+  // Remove the loading spinner - go directly to dashboard
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Navigation Header */}
