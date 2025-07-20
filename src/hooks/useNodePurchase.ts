@@ -1,13 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { 
   PublicKey, 
   Transaction, 
   SystemProgram, 
-  LAMPORTS_PER_SOL,
-  sendAndConfirmTransaction 
+  LAMPORTS_PER_SOL 
 } from '@solana/web3.js';
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 interface NodePurchaseConfig {
   recipientWallet: string;
@@ -27,16 +27,108 @@ export const useNodePurchase = () => {
   const { publicKey, sendTransaction } = useWallet();
   const { toast } = useToast();
   
-  // 配置信息 - 在实际项目中应该从API或配置文件获取
-  const [config] = useState<NodePurchaseConfig>({
-    recipientWallet: 'YOUR_SOLANA_WALLET_ADDRESS_HERE', // 替换为实际的收款钱包地址
-    nodePriceSOL: 0.1, // 每个节点的价格（SOL）
+  const [config, setConfig] = useState<NodePurchaseConfig>({
+    recipientWallet: '',
+    nodePriceSOL: 0.1,
     totalNodes: 1000,
     nodesSold: 0,
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [configLoading, setConfigLoading] = useState(true);
 
+  // 从 Supabase 加载配置
+  const loadConfig = useCallback(async () => {
+    try {
+      setConfigLoading(true);
+      
+      const { data: configData, error } = await supabase
+        .from('project_config')
+        .select('key, value')
+        .in('key', ['recipient_wallet', 'node_price', 'total_nodes', 'nodes_sold']);
+
+      if (error) {
+        console.error('加载配置失败:', error);
+        toast({
+          title: "配置加载失败",
+          description: "使用默认配置",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const configMap = Object.fromEntries(
+        configData?.map(item => [item.key, item.value]) || []
+      );
+
+      setConfig({
+        recipientWallet: configMap.recipient_wallet || '',
+        nodePriceSOL: parseFloat(configMap.node_price) || 0.1,
+        totalNodes: parseInt(configMap.total_nodes) || 1000,
+        nodesSold: parseInt(configMap.nodes_sold) || 0,
+      });
+
+    } catch (error) {
+      console.error('加载配置异常:', error);
+      toast({
+        title: "配置加载失败",
+        description: "使用默认配置",
+        variant: "destructive",
+      });
+    } finally {
+      setConfigLoading(false);
+    }
+  }, [toast]);
+
+  // 更新已售节点数
+  const updateNodesSold = useCallback(async (quantity: number) => {
+    try {
+      const newNodesSold = config.nodesSold + quantity;
+      
+      const { error } = await supabase
+        .from('project_config')
+        .update({ value: newNodesSold.toString() })
+        .eq('key', 'nodes_sold');
+
+      if (error) {
+        console.error('更新节点销量失败:', error);
+      } else {
+        setConfig(prev => ({ ...prev, nodesSold: newNodesSold }));
+      }
+    } catch (error) {
+      console.error('更新节点销量异常:', error);
+    }
+  }, [config.nodesSold]);
+
+  // 记录购买交易
+  const recordPurchase = useCallback(async (
+    quantity: number, 
+    totalPrice: number, 
+    transactionHash: string
+  ) => {
+    if (!publicKey) return;
+
+    try {
+      const { error } = await supabase
+        .from('node_purchases')
+        .insert({
+          user_wallet: publicKey.toString(),
+          quantity,
+          unit_price: config.nodePriceSOL,
+          total_price: totalPrice,
+          transaction_hash: transactionHash,
+          status: 'completed'
+        });
+
+      if (error) {
+        console.error('记录购买失败:', error);
+      }
+    } catch (error) {
+      console.error('记录购买异常:', error);
+    }
+  }, [publicKey, config.nodePriceSOL]);
+
+  // 购买节点
   const purchaseNodes = useCallback(async (
     quantity: number
   ): Promise<PurchaseResult> => {
@@ -49,7 +141,7 @@ export const useNodePurchase = () => {
       return { success: false, error: '钱包未连接' };
     }
 
-    if (!config.recipientWallet || config.recipientWallet === 'YOUR_SOLANA_WALLET_ADDRESS_HERE') {
+    if (!config.recipientWallet) {
       toast({
         title: "配置错误",
         description: "收款钱包地址未配置",
@@ -102,13 +194,16 @@ export const useNodePurchase = () => {
       // 确认交易
       await connection.confirmTransaction(signature, 'confirmed');
 
+      // 记录购买和更新节点数
+      await Promise.all([
+        recordPurchase(quantity, totalCost, signature),
+        updateNodesSold(quantity)
+      ]);
+
       toast({
         title: "购买成功",
         description: `成功购买 ${quantity} 个节点`,
       });
-
-      // 这里可以添加数据库记录逻辑
-      // await recordPurchase(quantity, totalCost, signature);
 
       return { 
         success: true, 
@@ -138,7 +233,7 @@ export const useNodePurchase = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [publicKey, sendTransaction, connection, config, toast]);
+  }, [publicKey, sendTransaction, connection, config, toast, recordPurchase, updateNodesSold]);
 
   // 检查余额
   const checkBalance = useCallback(async (): Promise<number> => {
@@ -158,11 +253,18 @@ export const useNodePurchase = () => {
     return config.totalNodes - config.nodesSold;
   }, [config]);
 
+  // 组件挂载时加载配置
+  useEffect(() => {
+    loadConfig();
+  }, [loadConfig]);
+
   return {
     config,
     isLoading,
+    configLoading,
     purchaseNodes,
     checkBalance,
     getAvailableNodes,
+    loadConfig,
   };
 };

@@ -10,7 +10,7 @@ import { Wallet, Coins, ShoppingCart, CheckCircle } from 'lucide-react';
 
 export const NodePurchaseSection: React.FC = () => {
   const { connected, publicKey } = useWallet();
-  const { config, isLoading, purchaseNodes, checkBalance, getAvailableNodes } = useNodePurchase();
+  const { config, isLoading, configLoading, purchaseNodes, checkBalance, getAvailableNodes } = useNodePurchase();
   
   const [quantity, setQuantity] = useState(1);
   const [balance, setBalance] = useState(0);
@@ -47,6 +47,18 @@ export const NodePurchaseSection: React.FC = () => {
                      quantity <= availableNodes && 
                      balance >= totalCost &&
                      !isLoading;
+
+  // 显示加载状态
+  if (configLoading) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
+          <p className="text-muted-foreground">加载配置中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
