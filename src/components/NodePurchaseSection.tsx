@@ -67,11 +67,11 @@ export const NodePurchaseSection: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+      <div className="text-center space-y-3">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
           Purchase Compute Nodes
         </h1>
-        <p className="text-muted-foreground text-xl max-w-3xl mx-auto">
+        <p className="text-muted-foreground text-sm max-w-3xl mx-auto">
           Become part of the decentralized AI network and earn token rewards and governance benefits
         </p>
       </div>
@@ -86,14 +86,14 @@ export const NodePurchaseSection: React.FC = () => {
                   <Coins className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-white">BitTok Compute Node</CardTitle>
+                  <CardTitle className="text-lg text-white">BitTok Compute Node</CardTitle>
                 </div>
               </div>
               <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
                 Limited Offer
               </Badge>
             </div>
-            <CardDescription className="text-slate-300">
+            <CardDescription className="text-slate-300 text-sm">
               Contribute computing power to the AI video generation network and earn stable returns
             </CardDescription>
           </CardHeader>
@@ -102,23 +102,23 @@ export const NodePurchaseSection: React.FC = () => {
             {/* Stats */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">Nodes Online</span>
-                <span className="text-2xl font-bold text-green-400">{nodesOnline.toLocaleString()}</span>
+                <span className="text-slate-400 text-sm">Nodes Online</span>
+                <span className="text-lg font-bold text-green-400">{nodesOnline.toLocaleString()}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">Remaining Nodes</span>
-                <span className="text-2xl font-bold text-yellow-400">{availableNodes.toLocaleString()}</span>
+                <span className="text-slate-400 text-sm">Remaining Nodes</span>
+                <span className="text-lg font-bold text-yellow-400">{availableNodes.toLocaleString()}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">Current Price</span>
-                <span className="text-2xl font-bold text-green-400">{config.nodePriceSOL} SOL</span>
+                <span className="text-slate-400 text-sm">Current Price</span>
+                <span className="text-lg font-bold text-green-400">{config.nodePriceSOL} SOL</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">Expected APY</span>
-                <span className="text-2xl font-bold text-green-400">15-25%</span>
+                <span className="text-slate-400 text-sm">Expected APY</span>
+                <span className="text-lg font-bold text-green-400">15-25%</span>
               </div>
             </div>
 
@@ -129,8 +129,8 @@ export const NodePurchaseSection: React.FC = () => {
                   <Zap className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
-                  <div className="text-white font-medium">High Performance</div>
-                  <div className="text-slate-400 text-sm">GPU Power</div>
+                  <div className="text-white text-sm font-medium">High Performance</div>
+                  <div className="text-slate-400 text-xs">GPU Power</div>
                 </div>
               </div>
               
@@ -139,8 +139,8 @@ export const NodePurchaseSection: React.FC = () => {
                   <Shield className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <div className="text-white font-medium">Secure & Stable</div>
-                  <div className="text-slate-400 text-sm">99.9% Uptime</div>
+                  <div className="text-white text-sm font-medium">Secure & Stable</div>
+                  <div className="text-slate-400 text-xs">99.9% Uptime</div>
                 </div>
               </div>
               
@@ -149,8 +149,8 @@ export const NodePurchaseSection: React.FC = () => {
                   <TrendingUp className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
-                  <div className="text-white font-medium">Passive Income</div>
-                  <div className="text-slate-400 text-sm">Daily Rewards</div>
+                  <div className="text-white text-sm font-medium">Passive Income</div>
+                  <div className="text-slate-400 text-xs">Daily Rewards</div>
                 </div>
               </div>
             </div>
@@ -160,8 +160,8 @@ export const NodePurchaseSection: React.FC = () => {
         {/* Right Side - Purchase Interface */}
         <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-2xl text-white">Purchase Nodes</CardTitle>
-            <CardDescription className="text-slate-300">
+            <CardTitle className="text-lg text-white">Purchase Nodes</CardTitle>
+            <CardDescription className="text-slate-300 text-sm">
               {!connected ? "Please connect wallet to continue purchase" : "Select quantity and complete your purchase"}
             </CardDescription>
           </CardHeader>
@@ -171,7 +171,7 @@ export const NodePurchaseSection: React.FC = () => {
               <div className="space-y-4">
                 <div className="text-center py-8">
                   <Wallet className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <p className="text-slate-400 mb-4">Connect your wallet to get started</p>
+                  <p className="text-slate-400 mb-4 text-sm">Connect your wallet to get started</p>
                   <div className="space-y-3">
                     <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg" />
                     <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
@@ -188,7 +188,7 @@ export const NodePurchaseSection: React.FC = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-400" />
-                      <span className="text-green-400 font-medium">Wallet Connected</span>
+                      <span className="text-green-400 font-medium text-sm">Wallet Connected</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -207,7 +207,7 @@ export const NodePurchaseSection: React.FC = () => {
                       <Link className="w-3 h-3" />
                       <span>Address: {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}</span>
                     </div>
-                    <div className="text-sm text-slate-400">
+                    <div className="text-xs text-slate-400">
                       Balance: {balance.toFixed(4)} SOL
                     </div>
                   </div>
@@ -215,26 +215,26 @@ export const NodePurchaseSection: React.FC = () => {
 
                 {/* Purchase Quantity */}
                 <div className="space-y-3">
-                  <label className="text-white font-medium">Purchase Quantity</label>
+                  <label className="text-white font-medium text-sm">Purchase Quantity</label>
                   <div className="flex items-center justify-center gap-4">
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="w-12 h-12 rounded-lg border-slate-600 text-white hover:bg-slate-700"
+                      className="w-10 h-10 rounded-lg border-slate-600 text-white hover:bg-slate-700"
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
-                    <div className="w-24 h-12 bg-slate-800 border border-slate-600 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl font-bold text-white">{quantity}</span>
+                    <div className="w-20 h-10 bg-slate-800 border border-slate-600 rounded-lg flex items-center justify-center">
+                      <span className="text-lg font-bold text-white">{quantity}</span>
                     </div>
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={() => setQuantity(Math.min(availableNodes, quantity + 1))}
                       disabled={quantity >= availableNodes}
-                      className="w-12 h-12 rounded-lg border-slate-600 text-white hover:bg-slate-700"
+                      className="w-10 h-10 rounded-lg border-slate-600 text-white hover:bg-slate-700"
                     >
                       <Plus className="w-4 h-4" />
                     </Button>
@@ -242,16 +242,16 @@ export const NodePurchaseSection: React.FC = () => {
                 </div>
 
                 {/* Price Summary */}
-                <div className="space-y-3">
-                  <div className="flex justify-between text-slate-300">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-slate-300 text-sm">
                     <span>Unit Price:</span>
                     <span>{config.nodePriceSOL} SOL</span>
                   </div>
-                  <div className="flex justify-between text-slate-300">
+                  <div className="flex justify-between text-slate-300 text-sm">
                     <span>Quantity:</span>
                     <span>{quantity}</span>
                   </div>
-                  <div className="flex justify-between text-xl font-bold text-white border-t border-slate-700 pt-3">
+                  <div className="flex justify-between text-lg font-bold text-white border-t border-slate-700 pt-2">
                     <span>Total:</span>
                     <span className="text-green-400">{totalCost.toFixed(4)} SOL</span>
                   </div>
@@ -299,7 +299,7 @@ export const NodePurchaseSection: React.FC = () => {
                 <Button
                   onClick={handlePurchase}
                   disabled={!canPurchase}
-                  className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 disabled:text-slate-400"
+                  className="w-full h-10 text-sm font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 disabled:text-slate-400"
                 >
                   {isLoading ? (
                     <>
