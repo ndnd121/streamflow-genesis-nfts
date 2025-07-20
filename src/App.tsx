@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
+import Register from "./pages/Register";
 import NodePurchase from "./pages/NodePurchase";
 import NotFound from "./pages/NotFound";
 import "./styles/wallet.css";
@@ -26,6 +27,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/node-purchase" element={<NodePurchase />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

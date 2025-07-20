@@ -168,11 +168,18 @@ const Index = () => {
                   </Button>
                 </Link>
               ) : (
-                <Link to="/auth">
-                  <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
-                    Sign In / Register
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link to="/register">
+                    <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
+                      Join Now
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="outline">
+                      Sign In
+                    </Button>
+                  </Link>
+                </div>
               )}
               <WalletMultiButton className="!bg-gradient-primary !hover:shadow-glow-primary !text-primary-foreground !border-0 !px-6 !transition-all !duration-300 !rounded-lg" />
               <Button size="icon" variant="ghost" className="md:hidden">
