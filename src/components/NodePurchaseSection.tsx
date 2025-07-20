@@ -19,7 +19,7 @@ export const NodePurchaseSection: React.FC = () => {
   const availableNodes = getAvailableNodes();
   const totalCost = quantity * config.nodePriceSOL;
 
-  // 获取钱包余额
+  // Get wallet balance
   useEffect(() => {
     if (connected && publicKey) {
       checkBalance().then(setBalance);
@@ -33,7 +33,7 @@ export const NodePurchaseSection: React.FC = () => {
 
     const result = await purchaseNodes(quantity);
     if (result.success) {
-      // 购买成功后重新获取余额
+      // Refresh balance after successful purchase
       const newBalance = await checkBalance();
       setBalance(newBalance);
       setQuantity(1);
@@ -48,13 +48,13 @@ export const NodePurchaseSection: React.FC = () => {
                      balance >= totalCost &&
                      !isLoading;
 
-  // 显示加载状态
+  // Show loading state
   if (configLoading) {
     return (
       <div className="max-w-2xl mx-auto p-6 flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
-          <p className="text-muted-foreground">加载配置中...</p>
+          <p className="text-muted-foreground">Loading configuration...</p>
         </div>
       </div>
     );
@@ -62,36 +62,36 @@ export const NodePurchaseSection: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      {/* 头部信息 */}
+      {/* Header Information */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          节点购买平台
+          Node Purchase Platform
         </h1>
         <p className="text-muted-foreground text-lg">
-          购买网络节点，参与去中心化生态系统
+          Purchase network nodes and participate in the decentralized ecosystem
         </p>
       </div>
 
-      {/* 节点信息卡片 */}
+      {/* Node Information Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Coins className="h-5 w-5" />
-            节点信息
+            Node Information
           </CardTitle>
           <CardDescription>
-            当前节点销售情况和价格信息
+            Current node sales status and pricing information
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 border rounded-lg">
               <div className="text-2xl font-bold text-primary">{config.nodePriceSOL} SOL</div>
-              <div className="text-sm text-muted-foreground">单价</div>
+              <div className="text-sm text-muted-foreground">Unit Price</div>
             </div>
             <div className="text-center p-4 border rounded-lg">
               <div className="text-2xl font-bold text-primary">{availableNodes}</div>
-              <div className="text-sm text-muted-foreground">可购买节点</div>
+              <div className="text-sm text-muted-foreground">Available Nodes</div>
             </div>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
@@ -101,12 +101,12 @@ export const NodePurchaseSection: React.FC = () => {
             />
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            已售出 {config.nodesSold} / {config.totalNodes} 个节点
+            Sold {config.nodesSold} / {config.totalNodes} nodes
           </div>
         </CardContent>
       </Card>
 
-      {/* 配置提醒 */}
+      {/* Configuration Reminder */}
       {!configLoading && config.recipientWallet === 'YOUR_SOLANA_WALLET_ADDRESS_HERE' && (
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="pt-6">
@@ -116,10 +116,10 @@ export const NodePurchaseSection: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-amber-800">
-                  需要配置收款钱包地址
+                  Recipient wallet address needs configuration
                 </p>
                 <p className="text-xs text-amber-700">
-                  请在 useNodePurchase.ts 中将 'YOUR_SOLANA_WALLET_ADDRESS_HERE' 替换为您的实际 Solana 钱包地址
+                  Please replace 'YOUR_SOLANA_WALLET_ADDRESS_HERE' with your actual Solana wallet address in useNodePurchase.ts
                 </p>
               </div>
             </div>
@@ -127,16 +127,16 @@ export const NodePurchaseSection: React.FC = () => {
         </Card>
       )}
 
-      {/* 钱包连接 */}
+      {/* Wallet Connection */}
       {!connected ? (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Wallet className="h-5 w-5" />
-              连接钱包
+              Connect Wallet
             </CardTitle>
             <CardDescription>
-              请连接您的 Solana 钱包以继续购买
+              Please connect your Solana wallet to continue purchasing
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -147,43 +147,43 @@ export const NodePurchaseSection: React.FC = () => {
         </Card>
       ) : (
         <>
-          {/* 钱包信息 */}
+          {/* Wallet Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-500" />
-                钱包已连接
+                Wallet Connected
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">钱包地址:</span>
+                <span className="text-muted-foreground">Wallet Address:</span>
                 <Badge variant="outline" className="font-mono text-xs">
                   {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
                 </Badge>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">余额:</span>
+                <span className="text-muted-foreground">Balance:</span>
                 <span className="font-semibold">{balance.toFixed(4)} SOL</span>
               </div>
             </CardContent>
           </Card>
 
-          {/* 购买界面 */}
+          {/* Purchase Interface */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
-                购买节点
+                Purchase Nodes
               </CardTitle>
               <CardDescription>
-                选择购买数量并完成支付
+                Select quantity and complete payment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* 数量选择 */}
+              {/* Quantity Selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">购买数量</label>
+                <label className="text-sm font-medium">Purchase Quantity</label>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -206,38 +206,38 @@ export const NodePurchaseSection: React.FC = () => {
                   </Button>
                 </div>
                 <div className="text-xs text-muted-foreground text-center">
-                  最多可购买 {availableNodes} 个节点
+                  Maximum {availableNodes} nodes available for purchase
                 </div>
               </div>
 
-              {/* 费用计算 */}
+              {/* Cost Calculation */}
               <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
                 <div className="flex justify-between">
-                  <span>单价:</span>
+                  <span>Unit Price:</span>
                   <span>{config.nodePriceSOL} SOL</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>数量:</span>
+                  <span>Quantity:</span>
                   <span>{quantity}</span>
                 </div>
                 <div className="border-t pt-2">
                   <div className="flex justify-between font-semibold text-lg">
-                    <span>总计:</span>
+                    <span>Total:</span>
                     <span className="text-primary">{totalCost.toFixed(4)} SOL</span>
                   </div>
                 </div>
               </div>
 
-              {/* 余额检查 */}
+              {/* Balance Check */}
               {balance < totalCost && (
                 <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-sm text-destructive">
-                    余额不足！需要 {totalCost.toFixed(4)} SOL，当前余额 {balance.toFixed(4)} SOL
+                    Insufficient balance! Need {totalCost.toFixed(4)} SOL, current balance {balance.toFixed(4)} SOL
                   </p>
                 </div>
               )}
 
-              {/* 服务条款 */}
+              {/* Terms of Service */}
               <div className="flex items-start space-x-2">
                 <Checkbox
                   id="terms"
@@ -245,11 +245,11 @@ export const NodePurchaseSection: React.FC = () => {
                   onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
                 />
                 <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
-                  我已阅读并同意服务条款和隐私政策。我了解这是一个去中心化交易，交易一旦确认将无法撤销。
+                  I have read and agree to the Terms of Service and Privacy Policy. I understand this is a decentralized transaction and cannot be reversed once confirmed.
                 </label>
               </div>
 
-              {/* 购买按钮 */}
+              {/* Purchase Button */}
               <Button
                 onClick={handlePurchase}
                 disabled={!canPurchase}
@@ -259,16 +259,16 @@ export const NodePurchaseSection: React.FC = () => {
                 {isLoading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                    处理中...
+                    Processing...
                   </>
                 ) : (
-                  `购买 ${quantity} 个节点 (${totalCost.toFixed(4)} SOL)`
+                  `Purchase ${quantity} nodes (${totalCost.toFixed(4)} SOL)`
                 )}
               </Button>
 
               {!agreedToTerms && (
                 <p className="text-xs text-muted-foreground text-center">
-                  请先同意服务条款
+                  Please agree to the Terms of Service first
                 </p>
               )}
             </CardContent>
@@ -276,12 +276,12 @@ export const NodePurchaseSection: React.FC = () => {
         </>
       )}
 
-      {/* 免责声明 */}
+      {/* Disclaimer */}
       <Card className="border-muted">
         <CardContent className="pt-6">
           <p className="text-xs text-muted-foreground text-center">
-            ⚠️ 风险提示：加密货币交易存在风险，请确保您完全理解相关风险后再进行投资。
-            本平台不对任何损失承担责任。
+            ⚠️ Risk Notice: Cryptocurrency trading involves risks. Please ensure you fully understand the risks before investing.
+            This platform is not responsible for any losses.
           </p>
         </CardContent>
       </Card>
