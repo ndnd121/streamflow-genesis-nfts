@@ -59,8 +59,8 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
   const handleDirectUpload = () => {
     if (!videoUrl.trim() || !title.trim()) {
       toast({
-        title: "请填写完整信息",
-        description: "请输入视频标题和视频链接",
+        title: "Please fill in complete information",
+        description: "Please enter video title and video link",
         variant: "destructive"
       });
       return;
@@ -74,16 +74,16 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
 
     setGeneratedVideo(video);
     toast({
-      title: "视频准备就绪",
-      description: "请保存到您的视频库"
+      title: "Video ready",
+      description: "Please save to your video library"
     });
   };
 
   const handleSaveVideo = async () => {
     if (!user) {
       toast({
-        title: "请先登录",
-        description: "您需要登录才能保存视频",
+        title: "Please log in first",
+        description: "You need to log in to save videos",
         variant: "destructive"
       });
       return;
@@ -91,8 +91,8 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
 
     if (!generatedVideo) {
       toast({
-        title: "没有视频可保存",
-        description: "请先上传或生成视频",
+        title: "No video to save",
+        description: "Please upload or generate a video first",
         variant: "destructive"
       });
       return;
@@ -112,8 +112,8 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
       if (error) throw error;
 
       toast({
-        title: "保存成功",
-        description: "视频已保存到您的个人库中"
+        title: "Save successful",
+        description: "Video has been saved to your personal library"
       });
 
       // Reset form
@@ -128,8 +128,8 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
     } catch (error) {
       console.error('Error saving video:', error);
       toast({
-        title: "保存失败",
-        description: "保存视频时发生错误，请重试",
+        title: "Save failed",
+        description: "An error occurred while saving the video, please try again",
         variant: "destructive"
       });
     } finally {
@@ -289,18 +289,18 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Upload className="h-5 w-5" />
-                上传视频链接
+                Upload Video Link
               </CardTitle>
               <CardDescription>
-                输入视频标题、描述和链接快速创建视频NFT
+                Enter video title, description and link to quickly create video NFT
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">视频标题</Label>
+                <Label htmlFor="title">Video Title</Label>
                 <Input
                   id="title"
-                  placeholder="输入视频标题..."
+                  placeholder="Enter video title..."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="bg-background/50"
@@ -308,10 +308,10 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="videoUrl">视频链接</Label>
+                <Label htmlFor="videoUrl">Video Link</Label>
                 <Input
                   id="videoUrl"
-                  placeholder="https://www.youtube.com/watch?v=... 或其他平台链接"
+                  placeholder="https://www.youtube.com/watch?v=... or other platform links"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
                   className="bg-background/50"
@@ -319,10 +319,10 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">视频描述</Label>
+                <Label htmlFor="description">Video Description</Label>
                 <Textarea
                   id="description"
-                  placeholder="描述您的视频内容..."
+                  placeholder="Describe your video content..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="bg-background/50"
@@ -336,7 +336,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                 className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
               >
                 <Upload className="h-4 w-4 mr-2" />
-                准备视频
+                Prepare Video
               </Button>
             </CardContent>
           </Card>
@@ -436,7 +436,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <PlayCircle className="h-5 w-5 text-green-500" />
-                  视频预览
+                  Video Preview
                 </div>
                 {user && (
                   <Button 
@@ -444,7 +444,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                     disabled={isSaving}
                     className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                   >
-                    {isSaving ? "保存中..." : "保存到我的视频库"}
+                    {isSaving ? "Saving..." : "Save to My Video Library"}
                   </Button>
                 )}
               </CardTitle>
@@ -470,7 +470,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                     <div className="w-full h-full flex items-center justify-center bg-muted">
                       <div className="text-center">
                         <Video className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">视频链接预览</p>
+                        <p className="text-sm text-muted-foreground">Video Link Preview</p>
                         <p className="text-xs text-muted-foreground mt-1">{generatedVideo.videoUrl}</p>
                       </div>
                     </div>
@@ -480,7 +480,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                 {!user && (
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <p className="text-sm text-muted-foreground">
-                      请先登录以保存视频到您的个人库
+                      Please log in to save videos to your personal library
                     </p>
                   </div>
                 )}
