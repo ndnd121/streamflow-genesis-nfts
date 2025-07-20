@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Search, 
   Filter, 
@@ -110,6 +111,7 @@ const mockVideoNFTs = [
 
 const Index = () => {
   const { connected } = useWallet();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('marketplace');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -159,6 +161,19 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-3">
+              {user ? (
+                <Link to="/dashboard">
+                  <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
+                    进入工作台
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90">
+                    登录/注册
+                  </Button>
+                </Link>
+              )}
               <WalletMultiButton className="!bg-gradient-primary !hover:shadow-glow-primary !text-primary-foreground !border-0 !px-6 !transition-all !duration-300 !rounded-lg" />
               <Button size="icon" variant="ghost" className="md:hidden">
                 <Menu className="h-4 w-4" />

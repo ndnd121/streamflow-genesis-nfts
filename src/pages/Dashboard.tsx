@@ -1,528 +1,224 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Youtube, Upload, User, Mail, Link as LinkIcon, Settings, Play, Eye, Heart, Share2, Star, Calendar, CheckCircle, Wallet, Coffee } from "lucide-react";
-import { VideoNFT } from "@/components/VideoNFT";
-import { BittokLogo } from "@/components/BittokLogo";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import { BittokLogo } from '@/components/BittokLogo';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { VideoNFT } from '@/components/VideoNFT';
+import { AIVideoGenerator } from '@/components/AIVideoGenerator';
+import { Plus, Video, LogOut, User } from 'lucide-react';
+
+interface Video {
+  id: string;
+  title: string;
+  video_url: string;
+  description: string | null;
+  created_at: string;
+}
 
 const Dashboard = () => {
-  const [userProfile, setUserProfile] = useState({
-    name: '',
-    email: '',
-    bio: '',
-    youtubeUrl: '',
-    tiktokUrl: '',
-    xUrl: ''
-  });
+  const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loadingVideos, setLoadingVideos] = useState(true);
+  const [showVideoGenerator, setShowVideoGenerator] = useState(false);
 
-  const [videoUrl, setVideoUrl] = useState('');
-  const [uploadedVideos, setUploadedVideos] = useState<any[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [lastCheckinDate, setLastCheckinDate] = useState<string>('');
-  const [isCheckedInToday, setIsCheckedInToday] = useState(false);
-  const [checkinStreak, setCheckinStreak] = useState(0);
-
-  const handleProfileChange = (field: string, value: string) => {
-    setUserProfile(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const extractVideoThumbnail = (url: string) => {
-    if (url.includes('youtube.com/watch?v=')) {
-      const videoId = url.split('v=')[1]?.split('&')[0];
-      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
     }
-    if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-    }
-    // For TikTok and X, we'll use placeholder for now as they require API access
-    return "/placeholder.svg";
-  };
+  }, [user, loading, navigate]);
 
-  // Extract video metadata from platform URLs
-  const extractVideoMetadata = async (url: string) => {
-    const platform = extractPlatform(url);
-    
+  useEffect(() => {
+    if (user) {
+      fetchUserVideos();
+    }
+  }, [user]);
+
+  const fetchUserVideos = async () => {
     try {
-      // For YouTube, try to extract real metadata using oEmbed API
-      if (platform === 'YouTube') {
-        const videoId = url.includes('watch?v=') 
-          ? url.split('v=')[1]?.split('&')[0]
-          : url.split('youtu.be/')[1]?.split('?')[0];
-        
-        if (videoId) {
-          try {
-            const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-            const response = await fetch(oEmbedUrl);
-            
-            if (response.ok) {
-              const data = await response.json();
-              return {
-                title: data.title || `YouTube Video ${videoId}`,
-                creator: data.author_name || "YouTube Creator",
-                views: Math.floor(Math.random() * 1000000) + 10000,
-                likes: Math.floor(Math.random() * 50000) + 1000,
-                shares: Math.floor(Math.random() * 5000) + 100
-              };
-            }
-          } catch (error) {
-            console.log('Failed to fetch YouTube metadata:', error);
-          }
-        }
-      }
-      
-      // For other platforms or fallback, extract from URL structure
-      let title = "Unknown Video";
-      let creator = "Unknown Creator";
-      
-      if (platform === 'TikTok') {
-        // Try to extract TikTok username from URL
-        const match = url.match(/tiktok\.com\/@([^\/]+)/);
-        creator = match ? `@${match[1]}` : "@tiktok_user";
-        title = "TikTok Video";
-      } else if (platform === 'X') {
-        // Try to extract X username from URL
-        const match = url.match(/(?:twitter\.com|x\.com)\/([^\/]+)/);
-        creator = match ? `@${match[1]}` : "@x_user";
-        title = "X Video Post";
-      }
-      
-      return {
-        title,
-        creator,
-        views: Math.floor(Math.random() * 100000) + 1000,
-        likes: Math.floor(Math.random() * 10000) + 100,
-        shares: Math.floor(Math.random() * 1000) + 10
-      };
+      const { data, error } = await supabase
+        .from('videos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setVideos(data || []);
     } catch (error) {
-      console.error('Error extracting metadata:', error);
-      return {
-        title: `Video from ${platform}`,
-        creator: "Unknown Creator",
-        views: Math.floor(Math.random() * 10000),
-        likes: Math.floor(Math.random() * 1000),
-        shares: Math.floor(Math.random() * 500)
-      };
+      console.error('Error fetching videos:', error);
+      toast({
+        title: "加载失败",
+        description: "无法加载您的视频，请刷新页面重试。",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingVideos(false);
     }
   };
 
-  const handleVideoUpload = async () => {
-    if (!videoUrl.trim()) return;
-    
-    setIsUploading(true);
-    
+  const handleSignOut = async () => {
     try {
-      // Extract video metadata from platform
-      const metadata = await extractVideoMetadata(videoUrl);
-      
-      // Simulate API call processing delay
-      setTimeout(() => {
-        const newVideo = {
-          id: Date.now().toString(),
-          title: metadata.title,
-          creator: metadata.creator,
-          thumbnail: extractVideoThumbnail(videoUrl),
-          price: Math.floor(Math.random() * 100) + 10,
-          likes: metadata.likes,
-          shares: metadata.shares,
-          views: metadata.views,
-          growthRate: Math.floor(Math.random() * 50),
-          tokenReward: Math.floor(Math.random() * 100) + 25,
-          videoUrl: videoUrl
-        };
-        
-        setUploadedVideos(prev => [newVideo, ...prev]);
-        setVideoUrl('');
-        setIsUploading(false);
-      }, 2000);
+      await signOut();
+      navigate('/');
     } catch (error) {
-      console.error('Error extracting video metadata:', error);
-      setIsUploading(false);
+      toast({
+        title: "登出失败",
+        description: "登出时发生错误，请重试。",
+        variant: "destructive"
+      });
     }
   };
 
-  const extractPlatform = (url: string) => {
-    if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube';
-    if (url.includes('tiktok.com')) return 'TikTok';
-    if (url.includes('twitter.com') || url.includes('x.com')) return 'X';
-    return 'Unknown Platform';
+  const handleVideoSaved = () => {
+    setShowVideoGenerator(false);
+    fetchUserVideos();
+    toast({
+      title: "视频已保存",
+      description: "您的视频已成功保存到个人库中。"
+    });
   };
 
-  const isPlatformConnected = (platform: string) => {
-    switch (platform) {
-      case 'youtube': return userProfile.youtubeUrl === 'connected';
-      case 'tiktok': return userProfile.tiktokUrl === 'connected';
-      case 'x': return userProfile.xUrl === 'connected';
-      default: return false;
-    }
-  };
-
-  const handleDailyCheckin = () => {
-    const today = new Date().toDateString();
-    if (!isCheckedInToday) {
-      setLastCheckinDate(today);
-      setIsCheckedInToday(true);
-      setCheckinStreak(prev => prev + 1);
-      // Add BTK rewards logic here
-    }
-  };
-
-  const canCheckin = () => {
-    return isPlatformConnected('youtube') || isPlatformConnected('tiktok') || isPlatformConnected('x');
-  };
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link 
-                to="/" 
-                className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back to Home
-              </Link>
-              <div className="flex items-center gap-3">
-                <BittokLogo size={32} className="drop-shadow-lg" />
-                <span className="text-xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                  Dashboard
-                </span>
-              </div>
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <BittokLogo className="h-8 w-auto" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              我的工作台
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <User className="h-4 w-4" />
+              <span>{user.email}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground">
-                Balance: 1,250 BTKs
-              </Badge>
-            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleSignOut}
+              className="flex items-center space-x-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>登出</span>
+            </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-card/50 backdrop-blur-sm">
-            <TabsTrigger value="upload" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Upload Video
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Profile
-            </TabsTrigger>
-            <TabsTrigger value="connect" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Connect Platforms
-            </TabsTrigger>
-            <TabsTrigger value="checkin" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              Daily Check-in
-            </TabsTrigger>
-          </TabsList>
+        {/* Actions */}
+        <div className="mb-8 flex gap-4">
+          <Button 
+            onClick={() => setShowVideoGenerator(true)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+          >
+            <Plus className="h-4 w-4" />
+            <span>创建新视频</span>
+          </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/node-purchase')}
+            className="flex items-center space-x-2"
+          >
+            <span>购买节点</span>
+          </Button>
+        </div>
 
-          {/* Upload Video Tab */}
-          <TabsContent value="upload" className="space-y-6">
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Upload Video to NFT</h2>
-                  <p className="text-muted-foreground">Paste your video URL from YouTube, TikTok, or X to convert it into an NFT</p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="videoUrl">Video URL</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="videoUrl"
-                          placeholder="https://www.youtube.com/watch?v=..."
-                          value={videoUrl}
-                          onChange={(e) => setVideoUrl(e.target.value)}
-                          className="pl-10 bg-background/50"
-                        />
-                      </div>
-                      <Button 
-                        onClick={handleVideoUpload}
-                        disabled={!videoUrl.trim() || isUploading}
-                        className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0"
-                      >
-                        {isUploading ? 'Processing...' : 'Create NFT'}
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {videoUrl && (
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        Platform detected: <Badge variant="outline">{extractPlatform(videoUrl)}</Badge>
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
-
-            {/* Uploaded Videos Preview */}
-            {uploadedVideos.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">Your Video NFTs</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {uploadedVideos.map((video) => (
-                    <VideoNFT key={video.id} {...video} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Profile Tab */}
-          <TabsContent value="profile" className="space-y-6">
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold text-foreground">Profile Information</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="name"
-                        placeholder="Enter your full name"
-                        value={userProfile.name}
-                        onChange={(e) => handleProfileChange('name', e.target.value)}
-                        className="pl-10 bg-background/50"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={userProfile.email}
-                        onChange={(e) => handleProfileChange('email', e.target.value)}
-                        className="pl-10 bg-background/50"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    placeholder="Tell us about yourself..."
-                    value={userProfile.bio}
-                    onChange={(e) => handleProfileChange('bio', e.target.value)}
-                    className="bg-background/50"
-                    rows={4}
-                  />
-                </div>
-                
-                <Button className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0">
-                  Save Profile
-                </Button>
-              </div>
-            </Card>
-          </TabsContent>
-
-          {/* Connect Platforms Tab */}
-          <TabsContent value="connect" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* YouTube */}
-              <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
-                    <Youtube className="h-8 w-8 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">YouTube</h3>
-                    <p className="text-sm text-muted-foreground">Connect via YouTube API</p>
-                  </div>
-                  
-                  {isPlatformConnected('youtube') ? (
-                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
-                      Connected
-                    </Badge>
-                  ) : (
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0"
-                      onClick={() => {
-                        // Simulate OAuth connection
-                        handleProfileChange('youtubeUrl', 'connected');
-                      }}
-                    >
-                      Connect with YouTube
-                    </Button>
-                  )}
-                </div>
-              </Card>
-
-              {/* TikTok */}
-              <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto">
-                    <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                      <span className="text-accent-foreground font-bold text-sm">TT</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">TikTok</h3>
-                    <p className="text-sm text-muted-foreground">Connect via TikTok API</p>
-                  </div>
-                  
-                  {isPlatformConnected('tiktok') ? (
-                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
-                      Connected
-                    </Badge>
-                  ) : (
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-gradient-accent hover:shadow-glow-accent text-accent-foreground border-0"
-                      onClick={() => {
-                        // Simulate OAuth connection
-                        handleProfileChange('tiktokUrl', 'connected');
-                      }}
-                    >
-                      Connect with TikTok
-                    </Button>
-                  )}
-                </div>
-              </Card>
-
-              {/* X (Twitter) */}
-              <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-                <div className="text-center space-y-4">
-                  <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto">
-                    <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
-                      <span className="text-secondary-foreground font-bold text-lg">𝕏</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">X (Twitter)</h3>
-                    <p className="text-sm text-muted-foreground">Connect via X API</p>
-                  </div>
-                  
-                  {isPlatformConnected('x') ? (
-                    <Badge variant="secondary" className="bg-gradient-secondary text-secondary-foreground">
-                      Connected
-                    </Badge>
-                  ) : (
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-gradient-secondary hover:shadow-glow-secondary text-secondary-foreground border-0"
-                      onClick={() => {
-                        // Simulate OAuth connection
-                        handleProfileChange('xUrl', 'connected');
-                      }}
-                    >
-                      Connect with X
-                    </Button>
-                  )}
-                </div>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Daily Check-in Tab */}
-          <TabsContent value="checkin" className="space-y-6">
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-              <div className="text-center space-y-6">
-                <div className="space-y-2">
-                  <div className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center mx-auto">
-                    <Coffee className="h-10 w-10 text-primary-foreground" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground">Daily Check-in</h2>
-                  <p className="text-muted-foreground">Complete daily tasks to earn BTKs</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="p-4 bg-background/50">
-                    <div className="text-center space-y-2">
-                      <CheckCircle className={`h-8 w-8 mx-auto ${isPlatformConnected('youtube') || isPlatformConnected('tiktok') || isPlatformConnected('x') ? 'text-green-500' : 'text-muted-foreground'}`} />
-                      <h3 className="font-medium text-foreground">Connect Platform</h3>
-                      <p className="text-sm text-muted-foreground">Connect at least one social platform</p>
-                      <Badge variant={canCheckin() ? "secondary" : "outline"} className={canCheckin() ? "bg-green-500/20 text-green-500" : ""}>
-                        {canCheckin() ? "✓ Complete" : "Pending"}
-                      </Badge>
-                    </div>
-                  </Card>
-
-                  <Card className="p-4 bg-background/50">
-                    <div className="text-center space-y-2">
-                      <Mail className={`h-8 w-8 mx-auto ${userProfile.email ? 'text-green-500' : 'text-muted-foreground'}`} />
-                      <h3 className="font-medium text-foreground">Bind Email</h3>
-                      <p className="text-sm text-muted-foreground">Add your email address</p>
-                      <Badge variant={userProfile.email ? "secondary" : "outline"} className={userProfile.email ? "bg-green-500/20 text-green-500" : ""}>
-                        {userProfile.email ? "✓ Complete" : "Pending"}
-                      </Badge>
-                    </div>
-                  </Card>
-
-                  <Card className="p-4 bg-background/50">
-                    <div className="text-center space-y-2">
-                      <Wallet className="h-8 w-8 mx-auto text-muted-foreground" />
-                      <h3 className="font-medium text-foreground">Connect Wallet</h3>
-                      <p className="text-sm text-muted-foreground">Connect your crypto wallet</p>
-                      <Badge variant="outline">
-                        Coming Soon
-                      </Badge>
-                    </div>
-                  </Card>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-foreground">{checkinStreak}</div>
-                      <div className="text-sm text-muted-foreground">Days Streak</div>
-                    </div>
-                    <div className="w-px h-8 bg-border" />
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-foreground">+50</div>
-                      <div className="text-sm text-muted-foreground">BTKs Today</div>
-                    </div>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    disabled={!canCheckin() || !userProfile.email || isCheckedInToday}
-                    onClick={handleDailyCheckin}
-                    className="w-full bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 disabled:opacity-50"
+        {/* Video Generator Modal */}
+        {showVideoGenerator && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">创建 AI 视频</h2>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowVideoGenerator(false)}
                   >
-                    <Calendar className="h-5 w-5 mr-2" />
-                    {isCheckedInToday ? "Checked in Today!" : "Daily Check-in (+50 BTKs)"}
+                    ✕
                   </Button>
-                  
-                  {(!canCheckin() || !userProfile.email) && (
-                    <p className="text-sm text-muted-foreground text-center">
-                      Complete the requirements above to enable daily check-in
-                    </p>
-                  )}
                 </div>
+                <AIVideoGenerator onVideoSaved={handleVideoSaved} />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Videos Grid */}
+        <div className="space-y-6">
+          <div className="flex items-center space-x-2">
+            <Video className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">我的视频库</h2>
+            <span className="text-sm text-muted-foreground">({videos.length})</span>
+          </div>
+
+          {loadingVideos ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardHeader>
+                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-3 bg-muted rounded w-1/2"></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="aspect-video bg-muted rounded"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : videos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videos.map((video) => (
+                <VideoNFT
+                  key={video.id}
+                  id={video.id}
+                  title={video.title}
+                  videoUrl={video.video_url}
+                  thumbnail="/placeholder.svg"
+                  creator="您"
+                  price={0}
+                  likes={0}
+                  shares={0}
+                  views={0}
+                  growthRate={0}
+                  tokenReward={0}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <CardTitle className="mb-2">还没有视频</CardTitle>
+                <CardDescription className="mb-4">
+                  创建您的第一个 AI 视频开始您的创作之旅
+                </CardDescription>
+                <Button 
+                  onClick={() => setShowVideoGenerator(true)}
+                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                >
+                  创建第一个视频
+                </Button>
+              </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );
