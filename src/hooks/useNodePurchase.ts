@@ -37,16 +37,16 @@ export const useNodePurchase = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [configLoading, setConfigLoading] = useState(true);
 
-  // 从 Supabase 加载配置
+  // Load configuration from Supabase
   const loadConfig = useCallback(async () => {
     try {
       setConfigLoading(true);
       
-      // 如果 Supabase 未配置，使用默认配置
+      // If Supabase is not configured, use default configuration
       if (!isSupabaseConfigured()) {
-        console.log('Supabase 未配置，使用默认配置');
+        console.log('Supabase not configured, using default configuration');
         setConfig({
-          recipientWallet: 'YOUR_SOLANA_WALLET_ADDRESS_HERE', // 需要替换为实际地址
+          recipientWallet: 'YOUR_SOLANA_WALLET_ADDRESS_HERE', // Replace with actual address
           nodePriceSOL: 0.1,
           totalNodes: 1000,
           nodesSold: 0,
@@ -61,10 +61,10 @@ export const useNodePurchase = () => {
         .in('key', ['recipient_wallet', 'node_price', 'total_nodes', 'nodes_sold']);
 
       if (error) {
-        console.error('加载配置失败:', error);
+        console.error('Failed to load configuration:', error);
         toast({
-          title: "配置加载失败",
-          description: "使用默认配置",
+          title: "Configuration Load Failed",
+          description: "Using default configuration",
           variant: "destructive",
         });
         return;
@@ -82,10 +82,10 @@ export const useNodePurchase = () => {
       });
 
     } catch (error) {
-      console.error('加载配置异常:', error);
+      console.error('Configuration loading error:', error);
       toast({
-        title: "配置加载失败",
-        description: "使用默认配置",
+        title: "Configuration Load Failed",
+        description: "Using default configuration",
         variant: "destructive",
       });
     } finally {
@@ -93,10 +93,10 @@ export const useNodePurchase = () => {
     }
   }, [toast]);
 
-  // 更新已售节点数
+  // Update sold nodes count
   const updateNodesSold = useCallback(async (quantity: number) => {
     if (!isSupabaseConfigured()) {
-      // 如果 Supabase 未配置，只更新本地状态
+      // If Supabase is not configured, only update local state
       setConfig(prev => ({ ...prev, nodesSold: prev.nodesSold + quantity }));
       return;
     }
@@ -110,16 +110,16 @@ export const useNodePurchase = () => {
         .eq('key', 'nodes_sold');
 
       if (error) {
-        console.error('更新节点销量失败:', error);
+        console.error('Failed to update node sales:', error);
       } else {
         setConfig(prev => ({ ...prev, nodesSold: newNodesSold }));
       }
     } catch (error) {
-      console.error('更新节点销量异常:', error);
+      console.error('Error updating node sales:', error);
     }
   }, [config.nodesSold]);
 
-  // 记录购买交易
+  // Record purchase transaction
   const recordPurchase = useCallback(async (
     quantity: number, 
     totalPrice: number, 
@@ -140,51 +140,51 @@ export const useNodePurchase = () => {
         });
 
       if (error) {
-        console.error('记录购买失败:', error);
+        console.error('Failed to record purchase:', error);
       }
     } catch (error) {
-      console.error('记录购买异常:', error);
+      console.error('Error recording purchase:', error);
     }
   }, [publicKey, config.nodePriceSOL]);
 
-  // 购买节点
+  // Purchase nodes
   const purchaseNodes = useCallback(async (
     quantity: number
   ): Promise<PurchaseResult> => {
     if (!publicKey) {
       toast({
-        title: "错误",
-        description: "请先连接钱包",
+        title: "Error",
+        description: "Please connect your wallet first",
         variant: "destructive",
       });
-      return { success: false, error: '钱包未连接' };
+      return { success: false, error: 'Wallet not connected' };
     }
 
     if (!config.recipientWallet) {
       toast({
-        title: "配置错误",
-        description: "收款钱包地址未配置",
+        title: "Configuration Error",
+        description: "Recipient wallet address not configured",
         variant: "destructive",
       });
-      return { success: false, error: '收款钱包地址未配置' };
+      return { success: false, error: 'Recipient wallet address not configured' };
     }
 
     if (quantity <= 0) {
       toast({
-        title: "错误",
-        description: "购买数量必须大于0",
+        title: "Error",
+        description: "Purchase quantity must be greater than 0",
         variant: "destructive",
       });
-      return { success: false, error: '无效的购买数量' };
+      return { success: false, error: 'Invalid purchase quantity' };
     }
 
     if (config.nodesSold + quantity > config.totalNodes) {
       toast({
-        title: "错误",
-        description: "剩余节点数量不足",
+        title: "Error",
+        description: "Insufficient nodes available",
         variant: "destructive",
       });
-      return { success: false, error: '节点数量不足' };
+      return { success: false, error: 'Insufficient nodes available' };
     }
 
     setIsLoading(true);
@@ -193,7 +193,7 @@ export const useNodePurchase = () => {
       const totalCost = quantity * config.nodePriceSOL;
       const lamports = totalCost * LAMPORTS_PER_SOL;
 
-      // 创建转账交易
+      // Create transfer transaction
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
@@ -202,26 +202,26 @@ export const useNodePurchase = () => {
         })
       );
 
-      // 获取最新的区块哈希
+      // Get latest block hash
       const { blockhash } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = publicKey;
 
-      // 发送交易
+      // Send transaction
       const signature = await sendTransaction(transaction, connection);
 
-      // 确认交易
+      // Confirm transaction
       await connection.confirmTransaction(signature, 'confirmed');
 
-      // 记录购买和更新节点数
+      // Record purchase and update node count
       await Promise.all([
         recordPurchase(quantity, totalCost, signature),
         updateNodesSold(quantity)
       ]);
 
       toast({
-        title: "购买成功",
-        description: `成功购买 ${quantity} 个节点`,
+        title: "Purchase Successful",
+        description: `Successfully purchased ${quantity} nodes`,
       });
 
       return { 
@@ -230,17 +230,17 @@ export const useNodePurchase = () => {
       };
 
     } catch (error: any) {
-      console.error('购买失败:', error);
+      console.error('Purchase failed:', error);
       
-      let errorMessage = '购买失败，请重试';
+      let errorMessage = 'Purchase failed, please try again';
       if (error.message?.includes('insufficient')) {
-        errorMessage = '余额不足';
+        errorMessage = 'Insufficient balance';
       } else if (error.message?.includes('rejected')) {
-        errorMessage = '交易被用户拒绝';
+        errorMessage = 'Transaction rejected by user';
       }
 
       toast({
-        title: "购买失败",
+        title: "Purchase Failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -254,7 +254,7 @@ export const useNodePurchase = () => {
     }
   }, [publicKey, sendTransaction, connection, config, toast, recordPurchase, updateNodesSold]);
 
-  // 检查余额
+  // Check balance
   const checkBalance = useCallback(async (): Promise<number> => {
     if (!publicKey) return 0;
     
@@ -262,17 +262,17 @@ export const useNodePurchase = () => {
       const balance = await connection.getBalance(publicKey);
       return balance / LAMPORTS_PER_SOL;
     } catch (error) {
-      console.error('获取余额失败:', error);
+      console.error('Failed to get balance:', error);
       return 0;
     }
   }, [publicKey, connection]);
 
-  // 获取可用节点数量
+  // Get available nodes count
   const getAvailableNodes = useCallback((): number => {
     return config.totalNodes - config.nodesSold;
   }, [config]);
 
-  // 组件挂载时加载配置
+  // Load configuration when component mounts
   useEffect(() => {
     loadConfig();
   }, [loadConfig]);
