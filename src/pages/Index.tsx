@@ -12,6 +12,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { 
   Search, 
   Filter, 
@@ -107,6 +109,7 @@ const mockVideoNFTs = [
 ];
 
 const Index = () => {
+  const { connected } = useWallet();
   const [activeTab, setActiveTab] = useState('marketplace');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -156,12 +159,16 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-3">
-              <Button 
-                asChild
-                className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 px-6 transition-all duration-300"
-              >
-                <Link to="/signin">Sign in</Link>
-              </Button>
+              {connected ? (
+                <Button 
+                  asChild
+                  className="bg-gradient-primary hover:shadow-glow-primary text-primary-foreground border-0 px-6 transition-all duration-300"
+                >
+                  <Link to="/node-purchase">Purchase Nodes</Link>
+                </Button>
+              ) : (
+                <WalletMultiButton className="!bg-gradient-primary !hover:shadow-glow-primary !text-primary-foreground !border-0 !px-6 !transition-all !duration-300 !rounded-lg" />
+              )}
               <Button size="icon" variant="ghost" className="md:hidden">
                 <Menu className="h-4 w-4" />
               </Button>
