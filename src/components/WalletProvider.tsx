@@ -25,18 +25,45 @@ export const SolanaWalletProvider: FC<SolanaWalletProviderProps> = ({ children }
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter({ network }),
-      new TorusWalletAdapter(),
-      new LedgerWalletAdapter(),
-    ],
+    () => {
+      // Add error handling for wallet adapters to prevent extension conflicts
+      const walletAdapters = [];
+      
+      try {
+        walletAdapters.push(new PhantomWalletAdapter());
+      } catch (error) {
+        console.warn('PhantomWalletAdapter failed to initialize:', error);
+      }
+      
+      try {
+        walletAdapters.push(new SolflareWalletAdapter({ network }));
+      } catch (error) {
+        console.warn('SolflareWalletAdapter failed to initialize:', error);
+      }
+      
+      try {
+        walletAdapters.push(new TorusWalletAdapter());
+      } catch (error) {
+        console.warn('TorusWalletAdapter failed to initialize:', error);
+      }
+      
+      try {
+        walletAdapters.push(new LedgerWalletAdapter());
+      } catch (error) {
+        console.warn('LedgerWalletAdapter failed to initialize:', error);
+      }
+      
+      return walletAdapters;
+    },
     [network]
   );
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets} autoConnect onError={(error) => {
+        console.warn('Wallet error:', error);
+        // Silently handle wallet errors to prevent app crashes
+      }}>
         <WalletModalProvider>
           {children}
         </WalletModalProvider>
