@@ -164,6 +164,32 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Upload Video to NFT Section */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-br from-background/80 to-primary/5 border border-border/30 rounded-xl p-6 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold mb-2 text-foreground">Upload Video to NFT</h2>
+            <p className="text-muted-foreground mb-6">Paste your video URL from YouTube to convert it into an NFT.</p>
+            
+            <div className="flex gap-4">
+              <div className="flex-1 relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-4 h-4 text-muted-foreground">🔗</div>
+                </div>
+                <input
+                  type="text"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="w-full pl-10 pr-4 py-3 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <Button 
+                className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-lg"
+              >
+                Create NFT
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Actions */}
         <div className="mb-8 flex gap-4">
           <Button 
@@ -171,7 +197,7 @@ const Dashboard = () => {
             className="flex items-center space-x-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
           >
             <Plus className="h-4 w-4" />
-            <span>Create New Video</span>
+            <span>Create AI Video</span>
           </Button>
           
           <Button 
@@ -208,7 +234,7 @@ const Dashboard = () => {
         <div className="space-y-6">
           <div className="flex items-center space-x-2">
             <Video className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">My Video Library</h2>
+            <h2 className="text-2xl font-bold text-foreground">Your Video NFTs</h2>
             <span className="text-sm text-muted-foreground">({videos.length})</span>
           </div>
 
