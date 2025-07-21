@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Sparkles, 
@@ -46,6 +47,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
   const [generatedVideo, setGeneratedVideo] = useState<{ title: string; videoUrl: string; description: string } | null>(null);
   const [activeNodes, setActiveNodes] = useState(12);
   const { user } = useAuth();
+  const { connected, publicKey } = useWallet();
   const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([
     { id: '1', name: 'Initializing', status: 'pending', progress: 0 },
     { id: '2', name: 'Processing Prompt', status: 'pending', progress: 0 },
@@ -80,10 +82,13 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
   };
 
   const handleSaveVideo = async () => {
-    if (!user) {
+    // Check authentication status (Supabase user or wallet connection)
+    const isAuthenticated = user || connected;
+    
+    if (!isAuthenticated) {
       toast({
         title: "Please log in first",
-        description: "You need to log in to save videos",
+        description: "You need to connect your wallet or sign in to save videos",
         variant: "destructive"
       });
       return;
@@ -100,13 +105,40 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
 
     setIsSaving(true);
     try {
+      // For wallet users without Supabase account, we'll use wallet address as identifier
+      let userId = user?.id;
+      
+      if (!user && connected && publicKey) {
+        // Create or get profile for wallet user
+        const walletAddress = publicKey.toString();
+        
+        // Check if profile exists for this wallet
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('display_name', walletAddress)
+          .single();
+        
+        if (existingProfile) {
+          userId = existingProfile.user_id;
+        } else {
+          // Create a temporary profile for wallet user - this would need proper implementation
+          toast({
+            title: "Wallet Save Not Supported Yet",
+            description: "Please sign in with email to save videos. Wallet-only save is coming soon!",
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from('videos')
         .insert({
           title: generatedVideo.title,
           video_url: generatedVideo.videoUrl,
           description: generatedVideo.description,
-          user_id: user.id
+          user_id: userId
         });
 
       if (error) throw error;
@@ -438,7 +470,7 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                   <PlayCircle className="h-5 w-5 text-green-500" />
                   Video Preview
                 </div>
-                {user && (
+                {(user || connected) && (
                   <Button 
                     onClick={handleSaveVideo}
                     disabled={isSaving}
@@ -477,10 +509,10 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
                   )}
                 </div>
 
-                {!user && (
+                {!(user || connected) && (
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <p className="text-sm text-muted-foreground">
-                      Please log in to save videos to your personal library
+                      Please connect your wallet or sign in to save videos to your library
                     </p>
                   </div>
                 )}
