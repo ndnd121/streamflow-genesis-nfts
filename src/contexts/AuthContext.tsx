@@ -100,26 +100,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    console.log('SignOut called');
+    
+    // Force clear state immediately
+    setUser(null);
+    setSession(null);
+    
     try {
-      // Force clear state immediately
-      setUser(null);
-      setSession(null);
-      
-      // Clear local storage
-      localStorage.removeItem('sb-bbxdeimyplzrwjdfakfc-auth-token');
+      // Clear all auth data from localStorage
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('supabase') || key.includes('auth')) {
+          localStorage.removeItem(key);
+        }
+      });
       
       // Sign out from Supabase
-      await supabase.auth.signOut();
-      
-      // Force page reload to clear any cached state
-      window.location.href = '/auth';
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Supabase signOut error:', error);
+      }
     } catch (error) {
-      console.error('Sign out failed:', error);
-      // Even if sign out fails, clear state and redirect
-      setUser(null);
-      setSession(null);
-      window.location.href = '/auth';
+      console.error('Sign out error:', error);
     }
+    
+    // Always redirect regardless of errors
+    console.log('Redirecting to /auth');
+    window.location.replace('/auth');
   };
 
   const value = {
