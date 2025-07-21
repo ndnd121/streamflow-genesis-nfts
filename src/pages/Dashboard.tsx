@@ -17,6 +17,14 @@ interface Video {
   video_url: string;
   description: string | null;
   created_at: string;
+  creator: string;
+  thumbnail: string | null;
+  price: number;
+  likes: number;
+  shares: number;
+  views: number;
+  growth_rate: number;
+  token_reward: number;
 }
 
 const Dashboard = () => {
@@ -226,14 +234,14 @@ const Dashboard = () => {
                   id={video.id}
                   title={video.title}
                   videoUrl={video.video_url}
-                  thumbnail="/placeholder.svg"
-                  creator="You"
-                  price={0}
-                  likes={0}
-                  shares={0}
-                  views={0}
-                  growthRate={0}
-                  tokenReward={0}
+                  thumbnail={video.thumbnail || "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1000&q=80"}
+                  creator={video.creator}
+                  price={video.price}
+                  likes={video.likes}
+                  shares={video.shares}
+                  views={video.views}
+                  growthRate={video.growth_rate}
+                  tokenReward={video.token_reward}
                 />
               ))}
             </div>

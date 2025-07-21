@@ -110,30 +110,54 @@ export type Database = {
       videos: {
         Row: {
           created_at: string
+          creator: string | null
           description: string | null
+          growth_rate: number | null
           id: string
+          likes: number | null
+          price: number | null
+          shares: number | null
+          thumbnail: string | null
           title: string
+          token_reward: number | null
           updated_at: string
           user_id: string
           video_url: string
+          views: number | null
         }
         Insert: {
           created_at?: string
+          creator?: string | null
           description?: string | null
+          growth_rate?: number | null
           id?: string
+          likes?: number | null
+          price?: number | null
+          shares?: number | null
+          thumbnail?: string | null
           title: string
+          token_reward?: number | null
           updated_at?: string
           user_id: string
           video_url: string
+          views?: number | null
         }
         Update: {
           created_at?: string
+          creator?: string | null
           description?: string | null
+          growth_rate?: number | null
           id?: string
+          likes?: number | null
+          price?: number | null
+          shares?: number | null
+          thumbnail?: string | null
           title?: string
+          token_reward?: number | null
           updated_at?: string
           user_id?: string
           video_url?: string
+          views?: number | null
         }
         Relationships: []
       }

@@ -144,7 +144,15 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
           title: generatedVideo.title,
           video_url: generatedVideo.videoUrl,
           description: generatedVideo.description,
-          user_id: userId
+          user_id: userId,
+          creator: 'You',
+          thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1000&q=80',
+          price: 0,
+          likes: Math.floor(Math.random() * 100) + 10,
+          shares: Math.floor(Math.random() * 50) + 5,
+          views: Math.floor(Math.random() * 1000) + 100,
+          growth_rate: Math.round(Math.random() * 20 * 10) / 10,
+          token_reward: 25
         });
 
       if (error) throw error;
