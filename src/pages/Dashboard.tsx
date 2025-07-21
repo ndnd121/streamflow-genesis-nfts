@@ -35,6 +35,8 @@ const Dashboard = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
   const [showVideoGenerator, setShowVideoGenerator] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [creatingNFT, setCreatingNFT] = useState(false);
 
   // Check if user is authenticated (either through Supabase or wallet)
   const isAuthenticated = user || connected;
@@ -92,6 +94,122 @@ const Dashboard = () => {
       title: "Video Saved",
       description: "Your video has been successfully saved to your library."
     });
+  };
+
+  // Extract YouTube video ID from URL
+  const extractYouTubeVideoId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /youtube\.com\/v\/([^&\n?#]+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    return null;
+  };
+
+  // Get YouTube thumbnail URL
+  const getYouTubeThumbnail = (videoId: string): string => {
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  };
+
+  // Extract video title from YouTube (basic implementation)
+  const extractVideoTitle = (url: string): string => {
+    const videoId = extractYouTubeVideoId(url);
+    return videoId ? `YouTube Video ${videoId.substring(0, 8)}` : 'Untitled Video';
+  };
+
+  const handleCreateNFT = async () => {
+    if (!youtubeUrl.trim()) {
+      toast({
+        title: "URL Required",
+        description: "Please enter a YouTube URL to create an NFT.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const videoId = extractYouTubeVideoId(youtubeUrl);
+    if (!videoId) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid YouTube URL.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setCreatingNFT(true);
+
+    try {
+      // Get user ID for authentication
+      let userId = user?.id;
+      
+      if (!userId && connected && publicKey) {
+        // Anonymous auth for wallet users
+        const { data: { user: anonUser }, error: authError } = await supabase.auth.signInAnonymously();
+        if (authError) throw authError;
+        userId = anonUser?.id;
+        
+        if (userId) {
+          // Create profile for wallet user
+          await supabase
+            .from('profiles')
+            .upsert({
+              user_id: userId,
+              display_name: `${publicKey.toString().slice(0, 8)}...${publicKey.toString().slice(-8)}`,
+              email: null
+            });
+        }
+      }
+
+      if (!userId) {
+        throw new Error('Unable to authenticate user');
+      }
+
+      const thumbnail = getYouTubeThumbnail(videoId);
+      const title = extractVideoTitle(youtubeUrl);
+
+      const { error } = await supabase
+        .from('videos')
+        .insert({
+          title,
+          video_url: youtubeUrl,
+          description: `YouTube video NFT created from ${youtubeUrl}`,
+          user_id: userId,
+          creator: user?.email || (publicKey ? `${publicKey.toString().slice(0, 8)}...${publicKey.toString().slice(-8)}` : 'You'),
+          thumbnail,
+          price: 0,
+          likes: Math.floor(Math.random() * 100) + 10,
+          shares: Math.floor(Math.random() * 50) + 5,
+          views: Math.floor(Math.random() * 1000) + 100,
+          growth_rate: Math.round(Math.random() * 20 * 10) / 10,
+          token_reward: 25
+        });
+
+      if (error) throw error;
+
+      setYoutubeUrl('');
+      fetchUserVideos();
+      
+      toast({
+        title: "NFT Created Successfully!",
+        description: "Your YouTube video has been converted to an NFT.",
+      });
+    } catch (error) {
+      console.error('Error creating NFT:', error);
+      toast({
+        title: "Creation Failed",
+        description: "Unable to create NFT from YouTube URL.",
+        variant: "destructive"
+      });
+    } finally {
+      setCreatingNFT(false);
+    }
   };
 
   if (!isAuthenticated) {
@@ -177,14 +295,18 @@ const Dashboard = () => {
                 </div>
                 <input
                   type="text"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
                   className="w-full pl-10 pr-4 py-3 bg-background/50 border border-border/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <Button 
-                className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-lg"
+                onClick={handleCreateNFT}
+                disabled={creatingNFT}
+                className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-lg disabled:opacity-50"
               >
-                Create NFT
+                {creatingNFT ? 'Creating...' : 'Create NFT'}
               </Button>
             </div>
           </div>

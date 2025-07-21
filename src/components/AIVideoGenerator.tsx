@@ -138,22 +138,44 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
         }
       }
 
-      const { error } = await supabase
-        .from('videos')
-        .insert({
-          title: generatedVideo.title,
-          video_url: generatedVideo.videoUrl,
-          description: generatedVideo.description,
-          user_id: userId,
-          creator: 'You',
-          thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1000&q=80',
-          price: 0,
-          likes: Math.floor(Math.random() * 100) + 10,
-          shares: Math.floor(Math.random() * 50) + 5,
-          views: Math.floor(Math.random() * 1000) + 100,
-          growth_rate: Math.round(Math.random() * 20 * 10) / 10,
-          token_reward: 25
-        });
+      // Extract YouTube video ID for thumbnail
+      const extractYouTubeVideoId = (url: string): string | null => {
+        const patterns = [
+          /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+          /youtube\.com\/v\/([^&\n?#]+)/
+        ];
+        
+        for (const pattern of patterns) {
+          const match = url.match(pattern);
+          if (match && match[1]) {
+            return match[1];
+          }
+        }
+        return null;
+      };
+
+      // Get thumbnail based on video URL
+      const videoId = extractYouTubeVideoId(generatedVideo.videoUrl);
+      const thumbnail = videoId 
+        ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        : 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1000&q=80';
+        
+        const { error } = await supabase
+          .from('videos')
+          .insert({
+            title: generatedVideo.title,
+            video_url: generatedVideo.videoUrl,
+            description: generatedVideo.description,
+            user_id: userId,
+            creator: 'You',
+            thumbnail,
+            price: 0,
+            likes: Math.floor(Math.random() * 100) + 10,
+            shares: Math.floor(Math.random() * 50) + 5,
+            views: Math.floor(Math.random() * 1000) + 100,
+            growth_rate: Math.round(Math.random() * 20 * 10) / 10,
+            token_reward: 25
+          });
 
       if (error) throw error;
 
