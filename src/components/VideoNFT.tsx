@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Share2, Star, TrendingUp, Play } from "lucide-react";
+import { VideoHoverTooltip } from "./VideoHoverTooltip";
 
 interface VideoNFTProps {
   id: string;
@@ -33,6 +34,8 @@ export const VideoNFT = ({
 }: VideoNFTProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCollected, setIsCollected] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -52,8 +55,39 @@ export const VideoNFT = ({
     window.open(videoUrl, '_blank');
   };
 
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+    setShowTooltip(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+  };
+
+  // Mock data for tooltip stats - in real app this would come from props or API
+  const tooltipStats = {
+    platformViews: Math.floor(views * 1.5) || 156000,
+    platformLikes: Math.floor(likes * 1.2) || 12500,
+    platformShares: Math.floor(shares * 1.1) || 2800,
+    bittokLikes: likes || 10,
+    bittokShares: shares || 5,
+    bittokCollects: Math.floor(likes * 0.3) || 50,
+    potentialTokens: tokenReward || 25,
+    growthRate: growthRate || 15.7
+  };
+
   return (
-    <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300 group">
+    <>
+      <Card 
+        className="bg-card/50 border-border/50 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300 group cursor-pointer"
+        onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
       <div className="relative overflow-hidden rounded-t-lg">
         <img 
           src={thumbnail} 
@@ -141,5 +175,15 @@ export const VideoNFT = ({
         </div>
       </div>
     </Card>
+    
+    <VideoHoverTooltip
+      title={title}
+      creator={creator}
+      description={`A ${creator} video with ${views.toLocaleString()} views and growing engagement`}
+      stats={tooltipStats}
+      isVisible={showTooltip}
+      position={mousePosition}
+    />
+    </>
   );
 };

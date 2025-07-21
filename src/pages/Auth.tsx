@@ -18,10 +18,10 @@ const Auth = () => {
   const [isConnecting, setIsConnecting] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user || connected) {
       navigate('/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, connected, navigate]);
 
   // Handle wallet connection success
   useEffect(() => {
