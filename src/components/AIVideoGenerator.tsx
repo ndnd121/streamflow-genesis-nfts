@@ -109,26 +109,32 @@ export const AIVideoGenerator: React.FC<AIVideoGeneratorProps> = ({ onVideoSaved
       let userId = user?.id;
       
       if (!user && connected && publicKey) {
-        // Create or get profile for wallet user
         const walletAddress = publicKey.toString();
         
-        // Check if profile exists for this wallet
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('display_name', walletAddress)
-          .single();
+        // Sign in anonymously to get auth.uid()
+        const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
         
-        if (existingProfile) {
-          userId = existingProfile.user_id;
-        } else {
-          // Create a temporary profile for wallet user - this would need proper implementation
-          toast({
-            title: "Wallet Save Not Supported Yet",
-            description: "Please sign in with email to save videos. Wallet-only save is coming soon!",
-            variant: "destructive"
-          });
-          return;
+        if (authError) {
+          console.error('Anonymous auth error:', authError);
+          throw new Error('Failed to create user session');
+        }
+        
+        userId = authData.user?.id;
+        
+        if (userId) {
+          // Create profile for wallet user
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              user_id: userId,
+              display_name: walletAddress,
+              email: null
+            });
+          
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            // Continue anyway, profile is optional for video saving
+          }
         }
       }
 
