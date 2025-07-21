@@ -84,7 +84,7 @@ const Auth = () => {
               <div className="flex items-center gap-3">
                 <BittokLogo size={28} className="drop-shadow-lg" />
               <span className="text-xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                BitTok
+                bittok
               </span>
               </div>
             </div>
@@ -108,7 +108,7 @@ const Auth = () => {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Welcome to BitTok
+                Welcome to bittok
               </CardTitle>
               <CardDescription className="text-muted-foreground mt-2">
                 Connect your wallet to sign in and start creating

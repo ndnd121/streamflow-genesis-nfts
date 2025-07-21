@@ -75,7 +75,7 @@ export const NodePurchaseSection: React.FC = () => {
                   <Coins className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-white">BitTok Compute Node</CardTitle>
+                  <CardTitle className="text-lg text-white">bittok Compute Node</CardTitle>
                 </div>
               </div>
               <Badge className="bg-green-500/20 text-green-400 border-green-500/30">

@@ -19,8 +19,8 @@ export default function NodePurchase() {
                 </Link>
               </Button>
               <BittokLogo size={32} className="drop-shadow-lg" />
-              <span className="text-2xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                BITTOK
+               <span className="text-2xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
+                bittok
               </span>
             </div>
 

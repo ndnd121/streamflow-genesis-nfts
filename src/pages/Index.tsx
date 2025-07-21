@@ -124,8 +124,8 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <BittokLogo size={32} className="drop-shadow-lg" />
-              <span className="text-2xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                BITTOK
+               <span className="text-2xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
+                bittok
               </span>
             </div>
 
@@ -220,8 +220,8 @@ const Index = () => {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-3">
               <BittokLogo size={24} />
-              <span className="text-lg font-brand font-semibold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                BITTOK Platform
+               <span className="text-lg font-brand font-semibold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
+                bittok Platform
               </span>
             </div>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
@@ -229,7 +229,7 @@ const Index = () => {
               and distributed node computing.
             </p>
             <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <span>© 2024 BITTOK</span>
+              <span>© 2024 bittok</span>
               <span>•</span>
               <span>Privacy</span>
               <span>•</span>
