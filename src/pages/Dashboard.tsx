@@ -29,7 +29,7 @@ interface Video {
 
 const Dashboard = () => {
   const { user, signOut, loading } = useAuth();
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, disconnect } = useWallet();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [videos, setVideos] = useState<Video[]>([]);
@@ -81,7 +81,28 @@ const Dashboard = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      // If wallet is connected, disconnect it
+      if (connected && disconnect) {
+        disconnect();
+        toast({
+          title: "Wallet Disconnected",
+          description: "Your wallet has been disconnected."
+        });
+      }
+      
+      // If Supabase user is logged in, sign them out
+      if (user) {
+        await signOut();
+      }
+      
+      // Navigate to auth page
+      navigate('/auth');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      // Force navigation even if there's an error
+      navigate('/auth');
+    }
   };
 
   const handleVideoSaved = () => {
