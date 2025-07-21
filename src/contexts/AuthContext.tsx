@@ -101,17 +101,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        throw error;
-      }
-      // Force clear the local state
+      // Force clear state immediately
       setUser(null);
       setSession(null);
+      
+      // Clear local storage
+      localStorage.removeItem('sb-bbxdeimyplzrwjdfakfc-auth-token');
+      
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      
+      // Force page reload to clear any cached state
+      window.location.href = '/auth';
     } catch (error) {
       console.error('Sign out failed:', error);
-      throw error;
+      // Even if sign out fails, clear state and redirect
+      setUser(null);
+      setSession(null);
+      window.location.href = '/auth';
     }
   };
 

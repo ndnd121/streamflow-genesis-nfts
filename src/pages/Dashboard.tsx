@@ -81,22 +81,7 @@ const Dashboard = () => {
   };
 
   const handleSignOut = async () => {
-    console.log('Starting sign out process...');
-    try {
-      await signOut();
-      console.log('Sign out successful, navigating to auth...');
-      // Force navigation to auth page
-      window.location.href = '/auth';
-    } catch (error) {
-      console.error('Sign out error:', error);
-      toast({
-        title: "Sign Out Failed",
-        description: "An error occurred during sign out, please try again.",
-        variant: "destructive"
-      });
-      // Even if sign out fails, redirect to auth page
-      window.location.href = '/auth';
-    }
+    await signOut();
   };
 
   const handleVideoSaved = () => {
