@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { VideoNFT } from '@/components/VideoNFT';
 import { AIVideoGenerator } from '@/components/AIVideoGenerator';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Plus, Video, LogOut, User, Home, ArrowLeft, ShoppingCart } from 'lucide-react';
 
 interface Video {
@@ -20,23 +21,27 @@ interface Video {
 
 const Dashboard = () => {
   const { user, signOut, loading } = useAuth();
+  const { connected, publicKey } = useWallet();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
   const [showVideoGenerator, setShowVideoGenerator] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
+  // Check if user is authenticated (either through Supabase or wallet)
+  const isAuthenticated = user || connected;
 
   useEffect(() => {
-    if (user) {
+    if (!loading && !isAuthenticated) {
+      navigate('/auth');
+    }
+  }, [user, connected, loading, navigate, isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
       fetchUserVideos();
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
   const fetchUserVideos = async () => {
     try {
@@ -81,7 +86,7 @@ const Dashboard = () => {
     });
   };
 
-  if (!user) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
         <div className="text-center">
@@ -134,7 +139,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4" />
-                <span>{user?.email || 'User'}</span>
+                <span>{user?.email || (publicKey ? `${publicKey.toString().slice(0, 8)}...${publicKey.toString().slice(-8)}` : 'User')}</span>
               </div>
               <Button 
                 variant="outline" 
