@@ -54,17 +54,20 @@ const Dashboard = () => {
   }, [isAuthenticated]);
 
   const fetchUserVideos = async () => {
-    if (!user) {
-      setLoadingVideos(false);
-      return;
-    }
-    
     try {
-      const { data, error } = await supabase
-        .from('videos')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      let query = supabase.from('videos').select('*');
+      
+      // Use user ID if Supabase user exists, otherwise use wallet address
+      if (user) {
+        query = query.eq('user_id', user.id);
+      } else if (connected && publicKey) {
+        query = query.eq('user_id', publicKey.toString());
+      } else {
+        setLoadingVideos(false);
+        return;
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
       setVideos(data || []);
@@ -82,19 +85,23 @@ const Dashboard = () => {
 
   const handleSignOut = async () => {
     try {
+      // Clear videos state first for immediate feedback
+      setVideos([]);
+      
       // If wallet is connected, disconnect it
       if (connected && disconnect) {
         disconnect();
-        toast({
-          title: "Wallet Disconnected",
-          description: "Your wallet has been disconnected."
-        });
       }
       
       // If Supabase user is logged in, sign them out
       if (user) {
         await signOut();
       }
+      
+      toast({
+        title: "已退出",
+        description: "您已成功退出账户"
+      });
       
       // Navigate to auth page
       navigate('/auth');
