@@ -111,7 +111,7 @@ const Dashboard = () => {
               <div className="flex items-center gap-3">
                 <BittokLogo size={28} className="drop-shadow-lg" />
                  <span className="text-xl font-brand font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide">
-                  bittok Dashboard
+                  BitTok Dashboard
                 </span>
               </div>
             </div>

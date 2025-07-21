@@ -92,7 +92,7 @@ const Register = () => {
               <div className="flex items-center gap-3">
                 <BittokLogo size={28} className="drop-shadow-lg" />
                  <span className="text-xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent tracking-wide">
-                  bittok
+                  BitTok
                 </span>
               </div>
             </div>
@@ -116,7 +116,7 @@ const Register = () => {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Join bittok
+                Join BitTok
               </CardTitle>
               <CardDescription className="text-white/70 mt-2">
                 Create your account and start earning
