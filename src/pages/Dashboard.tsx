@@ -54,10 +54,16 @@ const Dashboard = () => {
   }, [isAuthenticated]);
 
   const fetchUserVideos = async () => {
+    if (!user) {
+      setLoadingVideos(false);
+      return;
+    }
+    
     try {
       const { data, error } = await supabase
         .from('videos')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -77,7 +83,7 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      navigate('/');
+      navigate('/auth');
     } catch (error) {
       toast({
         title: "Sign Out Failed",
