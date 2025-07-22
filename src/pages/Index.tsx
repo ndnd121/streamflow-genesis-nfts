@@ -129,8 +129,12 @@ const Index = () => {
               </span>
             </div>
 
-            {/* Empty nav for clean header */}
-            <div></div>
+            <div className="flex items-center gap-3">
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm">Dashboard</Button>
+              </Link>
+              <WalletMultiButton className="!bg-gradient-primary !hover:shadow-glow-primary !text-primary-foreground !border-0 !px-6 !transition-all !duration-300 !rounded-lg" />
+            </div>
           </div>
         </div>
       </header>
