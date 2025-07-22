@@ -56,26 +56,39 @@ const Dashboard = () => {
   const fetchUserVideos = async () => {
     try {
       let query = supabase.from('videos').select('*');
+      let userId = null;
       
       // Use user ID if Supabase user exists, otherwise use wallet address
       if (user) {
-        query = query.eq('user_id', user.id);
+        userId = user.id;
+        console.log("Using Supabase user ID:", userId);
       } else if (connected && publicKey) {
-        query = query.eq('user_id', publicKey.toString());
+        userId = publicKey.toString();
+        console.log("Using wallet address as ID:", userId);
       } else {
+        console.log("No user ID available");
         setLoadingVideos(false);
         return;
       }
       
+      // Query with the determined user ID
+      query = query.eq('user_id', userId);
+      console.log("Fetching videos for user ID:", userId);
+      
       const { data, error } = await query.order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase query error:', error);
+        throw error;
+      }
+      
+      console.log("Videos fetched:", data?.length || 0);
       setVideos(data || []);
     } catch (error) {
       console.error('Error fetching videos:', error);
       toast({
-        title: "Loading Failed",
-        description: "Unable to load your videos, please refresh and try again.",
+        title: "加载失败",
+        description: "无法加载您的视频，请刷新并重试。",
         variant: "destructive"
       });
     } finally {
@@ -172,28 +185,22 @@ const Dashboard = () => {
 
     try {
       // Get user ID for authentication
-      let userId = user?.id;
+      let userId = null;
       
-      if (!userId && connected && publicKey) {
-        // Anonymous auth for wallet users
-        const { data: { user: anonUser }, error: authError } = await supabase.auth.signInAnonymously();
-        if (authError) throw authError;
-        userId = anonUser?.id;
-        
-        if (userId) {
-          // Create profile for wallet user
-          await supabase
-            .from('profiles')
-            .upsert({
-              user_id: userId,
-              display_name: `${publicKey.toString().slice(0, 8)}...${publicKey.toString().slice(-8)}`,
-              email: null
-            });
-        }
+      // Determine userId consistently - use either Supabase ID or wallet address
+      if (user) {
+        userId = user.id;
+      } else if (connected && publicKey) {
+        userId = publicKey.toString();
       }
 
       if (!userId) {
-        throw new Error('Unable to authenticate user');
+        toast({
+          title: "认证失败",
+          description: "无法验证您的身份，请重新登录。",
+          variant: "destructive"
+        });
+        return;
       }
 
       const thumbnail = getYouTubeThumbnail(videoId);
