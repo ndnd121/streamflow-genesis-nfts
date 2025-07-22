@@ -164,8 +164,8 @@ const Dashboard = () => {
   const handleCreateNFT = async () => {
     if (!youtubeUrl.trim()) {
       toast({
-        title: "URL Required",
-        description: "Please enter a YouTube URL to create an NFT.",
+        title: "URL必填",
+        description: "请输入YouTube URL创建NFT。",
         variant: "destructive"
       });
       return;
@@ -174,8 +174,8 @@ const Dashboard = () => {
     const videoId = extractYouTubeVideoId(youtubeUrl);
     if (!videoId) {
       toast({
-        title: "Invalid URL",
-        description: "Please enter a valid YouTube URL.",
+        title: "无效的URL",
+        description: "请输入有效的YouTube URL。",
         variant: "destructive"
       });
       return;
@@ -429,15 +429,15 @@ const Dashboard = () => {
             <Card className="text-center py-12">
               <CardContent>
                 <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <CardTitle className="mb-2">No videos yet</CardTitle>
+                <CardTitle className="mb-2">暂无视频</CardTitle>
                 <CardDescription className="mb-4">
-                  Create your first AI video to start your creative journey
+                  创建您的第一个AI视频来开始创意之旅
                 </CardDescription>
                 <Button 
                   onClick={() => setShowVideoGenerator(true)}
                   className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                 >
-                  Create First Video
+                  创建第一个视频
                 </Button>
               </CardContent>
             </Card>
